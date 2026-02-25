@@ -67,7 +67,7 @@ export default function RevenuePage() {
         const fetchOrders = async () => {
             if (!user._id) return;
             try {
-                const data = (await apiRequest(`/api/orders/chemist/${user._id}`)) as Order[];
+                const data = await apiRequest<Order[]>(`/api/orders/chemist/${user._id}`);
                 setOrders(data);
             } catch { /* */ } finally { setLoading(false); }
         };

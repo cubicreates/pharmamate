@@ -51,7 +51,7 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
         const fetchOrder = async () => {
             if (!user._id) return;
             try {
-                const orders = (await apiRequest(`/api/orders/chemist/${user._id}`)) as Order[];
+                const orders = await apiRequest<Order[]>(`/api/orders/chemist/${user._id}`);
                 const found = orders.find((o: Order) => o._id === orderId);
                 if (found && found.status !== 'Completed') {
                     setNotFulfilled(true);
@@ -69,14 +69,14 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
             if (!order || invoiceData || generating) return;
             setGenerating(true);
             try {
-                const data = (await apiRequest('/api/invoice/generate', {
+                const data = await apiRequest<InvoiceData>('/api/invoice/generate', {
                     method: 'POST',
                     body: JSON.stringify({
                         orderId: order._id, patientName: order.patientName, patientPrn: order.patientPrn,
                         doctorName: order.doctorName, items: order.items,
                         subtotal: order.total, batchNumber: order.batchNumber,
                     }),
-                })) as InvoiceData;
+                });
                 setInvoiceData(data);
             } catch { /* ignore */ } finally { setGenerating(false); }
         };

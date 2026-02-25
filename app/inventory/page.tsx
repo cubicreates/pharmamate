@@ -661,7 +661,7 @@ export default function InventoryPage() {
     useEffect(() => {
         const fetchInventory = async () => {
             try {
-                const data = (await apiRequest('/api/inventory')) as InventoryItem[];
+                const data = await apiRequest<InventoryItem[]>('/api/inventory');
                 setInventory(data);
             } catch { console.error('Failed to fetch inventory'); } finally { setLoading(false); }
         };

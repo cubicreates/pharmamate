@@ -128,7 +128,7 @@ export default function AIAssistant() {
     useEffect(() => {
         const fetchKnowledge = async () => {
             try {
-                const data = (await apiRequest('/api/ai/knowledge')) as AIKnowledge;
+                const data = await apiRequest<AIKnowledge>('/api/ai/knowledge');
                 if (data) {
                     setKnowledge(data);
 

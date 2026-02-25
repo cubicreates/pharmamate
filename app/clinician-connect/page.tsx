@@ -16,7 +16,7 @@ interface QueryLog {
     status: 'sent' | 'replied' | 'pending';
 }
 
-export default function ClinicianConnectPage() {
+function ClinicianConnectContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const prefillDoctor = searchParams.get('doctor') || '';
@@ -65,10 +65,10 @@ export default function ClinicianConnectPage() {
         if (!doctorName.trim() || !message.trim() || !patientPrn.trim()) return;
         setQueryStatus('sending');
         try {
-            const data = (await apiRequest('/api/doctor/query', {
+            const data = await apiRequest<{ queryId?: string }>('/api/doctor/query', {
                 method: 'POST',
                 body: JSON.stringify({ doctorName, doctorPhone, patientPrn, message }),
-            })) as { queryId?: string };
+            });
             setQueryStatus('sent');
             setQueryLogs((prev) => [
                 {
@@ -313,5 +313,17 @@ export default function ClinicianConnectPage() {
                 </div>
             </div>
         </Layout>
+    );
+}
+
+export default function ClinicianConnectPage() {
+    return (
+        <React.Suspense fallback={
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+            </div>
+        }>
+            <ClinicianConnectContent />
+        </React.Suspense>
     );
 }

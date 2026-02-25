@@ -59,7 +59,7 @@ export default function FulfillmentPage({ params }: { params: Promise<{ id: stri
         const fetchOrder = async () => {
             if (!user._id) return;
             try {
-                const orders = (await apiRequest(`/api/orders/chemist/${user._id}`)) as Order[];
+                const orders = await apiRequest<Order[]>(`/api/orders/chemist/${user._id}`);
                 const found = orders.find((o: Order) => o._id === orderId);
                 if (found && found.status === 'Completed') {
                     router.replace(`/orders/${orderId}/invoice`);

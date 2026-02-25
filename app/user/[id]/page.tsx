@@ -49,7 +49,7 @@ export default function UserProfilePage() {
         setLoading(true);
         setMessage({ type: '', text: '' });
         try {
-            const data = (await apiRequest('/api/chemists/profile', {
+            const data = await apiRequest<Record<string, unknown>>('/api/chemists/profile', {
                 method: 'PUT',
                 body: JSON.stringify({
                     name: formData.name,
@@ -57,7 +57,7 @@ export default function UserProfilePage() {
                     mobile: formData.mobile,
                     address: formData.address,
                 }),
-            })) as Record<string, unknown>;
+            });
             const currentUser = JSON.parse(
                 localStorage.getItem('chemUser') || sessionStorage.getItem('chemUser') || '{}'
             );

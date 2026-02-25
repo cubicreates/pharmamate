@@ -52,7 +52,7 @@ export default function OrdersPage() {
         const fetchOrders = async () => {
             if (!user._id) return;
             try {
-                const data = await apiRequest(`/api/orders/chemist/${user._id}`);
+                const data = await apiRequest<Order[]>(`/api/orders/chemist/${user._id}`);
                 setOrders(data);
             } catch { /* ignore */ } finally { setLoading(false); }
         };

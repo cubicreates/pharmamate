@@ -40,7 +40,7 @@ export default function SubstitutesFinderPage() {
         setLoading(true);
         setSearched(true);
         try {
-            const data = await apiRequest(`/api/inventory/substitutes/${encodeURIComponent(searchTerm.trim())}`);
+            const data = await apiRequest<SubstituteItem[]>(`/api/inventory/substitutes/${encodeURIComponent(searchTerm.trim())}`);
             setResults(data);
             setRecentSearches(prev => {
                 const updated = [searchTerm.trim(), ...prev.filter(s => s !== searchTerm.trim())].slice(0, 5);
@@ -53,7 +53,7 @@ export default function SubstitutesFinderPage() {
         setSearchTerm(term);
         setLoading(true);
         setSearched(true);
-        apiRequest(`/api/inventory/substitutes/${encodeURIComponent(term)}`)
+        apiRequest<SubstituteItem[]>(`/api/inventory/substitutes/${encodeURIComponent(term)}`)
             .then(data => setResults(data))
             .catch(() => setResults([]))
             .finally(() => setLoading(false));

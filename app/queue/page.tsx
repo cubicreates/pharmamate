@@ -66,7 +66,7 @@ export default function QueuePage() {
     useEffect(() => {
         const fetchQueue = async () => {
             try {
-                const data = (await apiRequest('/api/queue')) as QueueItem[];
+                const data = await apiRequest<QueueItem[]>('/api/queue');
                 setQueue(data);
             } catch { /* ignore */ } finally { setLoading(false); }
         };
