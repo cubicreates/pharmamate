@@ -90,13 +90,13 @@ export default function CounterPage() {
         setOtpStatus('requesting');
         setShowModal(true);
         try {
-            const data = await apiRequest('/api/access/request', {
+            const data = await apiRequest<{ requestId: string }>('/api/access/request', {
                 method: 'POST', body: JSON.stringify({ patientPrn: patientPrn.trim() }),
             });
             setRequestId(data.requestId);
             setOtpStatus('waiting');
             setTimeout(async () => {
-                const status = await apiRequest(`/api/access/check-status/${data.requestId}`);
+                const status = await apiRequest<{ granted: boolean; accessToken: string }>(`/api/access/check-status/${data.requestId}`);
                 if (status.granted) {
                     setOtpStatus('granted');
                     await fetchPrescription(status.accessToken, patientPrn.trim());
@@ -110,7 +110,7 @@ export default function CounterPage() {
         if (!otp.trim()) return;
         setOtpStatus('verifying');
         try {
-            const data = await apiRequest('/api/access/verify-otp', {
+            const data = await apiRequest<{ accessToken: string }>('/api/access/verify-otp', {
                 method: 'POST', body: JSON.stringify({ requestId, otp }),
             });
             setOtpStatus('granted');
@@ -122,7 +122,7 @@ export default function CounterPage() {
     const fetchPrescription = async (token: string, prn: string) => {
         setLoading(true);
         try {
-            const data = await apiRequest(`/api/prescriptions/latest/${prn}`);
+            const data = await apiRequest<Prescription>(`/api/prescriptions/latest/${prn}`);
             setPrescription(data);
         } catch { /* ignore */ } finally { setLoading(false); }
     };
@@ -132,7 +132,7 @@ export default function CounterPage() {
         setShowSubstitutes(salt);
         if (substitutes[salt]) return;
         try {
-            const data = await apiRequest(`/api/inventory/substitutes/${encodeURIComponent(salt)}`);
+            const data = await apiRequest<SubstituteItem[]>(`/api/inventory/substitutes/${encodeURIComponent(salt)}`);
             setSubstitutes(prev => ({ ...prev, [salt]: data }));
         } catch { /* ignore */ }
     };
