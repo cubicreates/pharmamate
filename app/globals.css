@@ -1,0 +1,225 @@
+@import "tailwindcss";
+
+/* ============================================
+   Tailwind v4 — Custom Variants & Theme
+   ============================================ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  /* === Core Palette (Warm Pharmacy Green) === */
+  --color-primary: #166534;
+  --color-primary-light: #15803d;
+  --color-primary-dark: #14532d;
+  --color-accent: #22c55e;
+  --color-accent-light: #4ade80;
+  --color-accent-dark: #16a34a;
+
+  /* === Semantic Colors === */
+  --color-success: #16a34a;
+  --color-alert: #ea580c;
+  --color-danger: #dc2626;
+  --color-info: #2563eb;
+
+  /* === Theme Variable Mapping === */
+  /* These map to the dynamic CSS variables defined in :root/html.dark */
+  --color-background: var(--bg-main);
+  --color-foreground: var(--text-main);
+  --color-surface: var(--bg-surface);
+  --color-border-subtle: var(--border-main);
+
+  /* === Fixed Palettes === */
+  --color-offwhite: #f5f5f4;
+  --color-neutral: #e7e5e4;
+  --color-muted: #78716c;
+
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+}
+
+/* ============================================
+   VARIABLE DEFINITIONS (The Engine)
+   ============================================ */
+:root {
+  --bg-main: #fafaf9;
+  /* Stone 50 */
+  --text-main: #1c1917;
+  /* Stone 900 */
+  --bg-surface: #ffffff;
+  --border-main: #e7e5e4;
+  /* Stone 200 */
+
+  --shadow-main: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+  color-scheme: light;
+}
+
+html.dark {
+  --bg-main: #0c0a09;
+  /* Stone 950 */
+  --text-main: #e7e5e4;
+  /* Stone 200 */
+  --bg-surface: #1c1917;
+  /* Stone 900 */
+  --border-main: #44403c;
+  /* Stone 700 */
+
+  --shadow-main: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+body {
+  @apply bg-background text-foreground antialiased;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+  margin: 0;
+}
+
+/* ============================================
+   REUSABLE UTILITY COMPONENTS
+   ============================================ */
+
+.glass-header {
+  @apply bg-background/80 backdrop-blur-xl border-b border-border-subtle z-50;
+}
+
+.glass-card {
+  @apply bg-surface border border-border-subtle rounded-xl transition-colors duration-200;
+  box-shadow: var(--shadow-main);
+}
+
+.glass-card:hover {
+  @apply border-stone-300 dark:border-stone-600;
+}
+
+.input-clinical {
+  @apply w-full bg-stone-100/50 dark:bg-stone-800/40 border border-border-subtle rounded-lg px-4 py-2.5 transition-all text-sm text-foreground;
+  @apply focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 dark:focus:ring-accent/15;
+}
+
+.btn-primary {
+  @apply bg-primary text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition-all;
+  @apply hover:bg-primary-light active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+}
+
+/* Badge styles — correctly themed */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider;
+}
+
+.badge-info {
+  @apply bg-info/8 text-info border border-info/15;
+}
+
+.badge-success {
+  @apply bg-success/8 text-success border border-success/15;
+}
+
+.badge-warning {
+  @apply bg-alert/8 text-alert border border-alert/15;
+}
+
+/* Status dot */
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.status-dot.active {
+  @apply animate-pulse ring-2 ring-current ring-offset-2 ring-offset-background;
+}
+
+/* Professional Table */
+.table-pro {
+  @apply w-full text-sm;
+  border-collapse: collapse;
+}
+
+.table-pro th {
+  @apply text-left text-[11px] font-semibold uppercase tracking-wider text-muted px-4 py-2.5 whitespace-nowrap;
+}
+
+.table-pro td {
+  @apply px-4 py-3 text-sm;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-stone-300 dark:bg-stone-800 rounded-full hover:bg-stone-400 dark:hover:bg-stone-700;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.25s ease-out both;
+}
+
+/* ============================================
+   SKELETON LOADING
+   ============================================ */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton {
+  @apply relative overflow-hidden bg-stone-200 dark:bg-stone-800 rounded-lg;
+}
+
+.skeleton::after {
+  content: "";
+  @apply absolute inset-0;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+html.dark .skeleton::after {
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent);
+}

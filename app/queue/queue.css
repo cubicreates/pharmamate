@@ -1,0 +1,730 @@
+/* ============================================
+   QUEUE PAGE — Clinical Minimalism Design
+   ============================================
+   Professional, enterprise-grade design language
+   for the pharmacy live patient queue.
+   ============================================ */
+
+/* ---------- WORKSPACE ---------- */
+.queue-workspace {
+    max-width: 100%;
+}
+
+/* ---------- HERO BANNER ---------- */
+.queue-hero {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 180px;
+    margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+    .queue-hero {
+        height: 210px;
+    }
+}
+
+.queue-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.queue-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(15, 61, 46, 0.78) 50%, rgba(15, 23, 42, 0.65) 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 24px 28px;
+}
+
+.queue-hero-content {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.queue-hero-text {
+    max-width: 520px;
+}
+
+.queue-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    backdrop-filter: blur(4px);
+}
+
+.queue-hero-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+    .queue-hero-title {
+        font-size: 26px;
+    }
+}
+
+.queue-hero-subtitle {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.5;
+    margin: 0;
+    font-weight: 400;
+}
+
+.queue-hero-stats {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.queue-hero-stat {
+    text-align: center;
+    min-width: 64px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(4px);
+}
+
+.queue-hero-stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.queue-hero-stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+@media (max-width: 767px) {
+    .queue-hero-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .queue-hero-stats {
+        align-self: flex-start;
+    }
+}
+
+
+/* ---------- STATUS BAR ---------- */
+.queue-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-main);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-main);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.queue-status-group {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.queue-status-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #78716c;
+}
+
+.queue-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+}
+
+.queue-status-dot--verifying {
+    background: #ea580c;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
+}
+
+.queue-status-dot--waiting {
+    background: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.queue-status-dot--serving {
+    background: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
+}
+
+.queue-status-count {
+    font-weight: 700;
+    color: var(--text-main);
+    margin-left: 2px;
+}
+
+.queue-live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #16a34a;
+}
+
+.queue-live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+    animation: queue-pulse 2s ease-in-out infinite;
+}
+
+@keyframes queue-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.queue-avg-wait {
+    font-size: 12px;
+    color: #78716c;
+    font-weight: 500;
+}
+
+.queue-avg-wait strong {
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+
+/* ---------- QUEUE GRID ---------- */
+.queue-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+@media (min-width: 768px) {
+    .queue-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1280px) {
+    .queue-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+/* ---------- PATIENT CARD ---------- */
+.queue-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-main);
+    border-radius: 10px;
+    box-shadow: var(--shadow-main);
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    position: relative;
+    animation: queue-card-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.queue-card:hover {
+    border-color: #d6d3d1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.08);
+}
+
+:where(.dark) .queue-card:hover {
+    border-color: #57534e;
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.4);
+}
+
+.queue-card--urgent {
+    border-color: #fecaca;
+}
+
+:where(.dark) .queue-card--urgent {
+    border-color: rgba(220, 38, 38, 0.25);
+}
+
+@keyframes queue-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Accent stripe */
+.queue-card-stripe {
+    height: 3px;
+}
+
+.queue-card-stripe--verifying {
+    background: #ea580c;
+}
+
+.queue-card-stripe--waiting {
+    background: #2563eb;
+}
+
+.queue-card-stripe--serving {
+    background: #16a34a;
+}
+
+.queue-card-body {
+    padding: 16px 18px;
+}
+
+
+/* Patient header row */
+.queue-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.queue-card-patient {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.queue-card-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.queue-card-avatar--verifying {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #ea580c;
+}
+
+.queue-card-avatar--waiting {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #2563eb;
+}
+
+.queue-card-avatar--serving {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+:where(.dark) .queue-card-avatar--verifying {
+    background: rgba(234, 88, 12, 0.10);
+    border-color: rgba(234, 88, 12, 0.25);
+    color: #fb923c;
+}
+
+:where(.dark) .queue-card-avatar--waiting {
+    background: rgba(37, 99, 235, 0.10);
+    border-color: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+}
+
+:where(.dark) .queue-card-avatar--serving {
+    background: rgba(22, 101, 52, 0.12);
+    border-color: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.queue-card-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0;
+    letter-spacing: -0.01em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.queue-card-prn {
+    font-size: 11px;
+    color: #a8a29e;
+    font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+    margin: 2px 0 0;
+    letter-spacing: 0.02em;
+}
+
+
+/* Status badge */
+.queue-card-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.queue-card-status--verifying {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+}
+
+.queue-card-status--waiting {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+.queue-card-status--serving {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+:where(.dark) .queue-card-status--verifying {
+    background: rgba(234, 88, 12, 0.08);
+    border-color: rgba(234, 88, 12, 0.2);
+    color: #fb923c;
+}
+
+:where(.dark) .queue-card-status--waiting {
+    background: rgba(37, 99, 235, 0.08);
+    border-color: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+}
+
+:where(.dark) .queue-card-status--serving {
+    background: rgba(22, 163, 74, 0.08);
+    border-color: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.queue-card-status-icon {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+
+/* Detail rows */
+.queue-card-details {
+    background: #fafaf9;
+    border: 1px solid var(--border-main);
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+
+:where(.dark) .queue-card-details {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.queue-card-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.queue-card-detail-row+.queue-card-detail-row {
+    border-top: 1px solid var(--border-main);
+}
+
+.queue-card-detail-label {
+    font-size: 12px;
+    color: #78716c;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.queue-card-detail-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.queue-card-detail-value--urgent {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.queue-card-urgent-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #dc2626;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+}
+
+:where(.dark) .queue-card-urgent-badge {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.2);
+    color: #f87171;
+}
+
+
+/* Action button */
+.queue-card-action {
+    margin-top: 14px;
+}
+
+.queue-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    background: #166534;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    font-family: inherit;
+}
+
+.queue-action-btn:hover {
+    background: #15803d;
+}
+
+.queue-action-btn:active {
+    transform: scale(0.98);
+}
+
+
+/* ---------- LOADING STATE ---------- */
+.queue-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 0;
+    gap: 14px;
+    color: #78716c;
+    font-size: 14px;
+}
+
+.queue-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--border-main);
+    border-top-color: #166534;
+    border-radius: 50%;
+    animation: queue-spin 0.7s linear infinite;
+}
+
+@keyframes queue-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* ---------- EMPTY STATE ---------- */
+.queue-empty {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-main);
+    border-radius: 12px;
+    box-shadow: var(--shadow-main);
+    text-align: center;
+    padding: 64px 24px;
+}
+
+.queue-empty-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #166534;
+    margin: 0 auto 16px;
+}
+
+:where(.dark) .queue-empty-icon {
+    background: rgba(22, 101, 52, 0.12);
+    border-color: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.queue-empty-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+}
+
+.queue-empty-desc {
+    font-size: 13px;
+    color: #78716c;
+    margin: 0 0 20px;
+    line-height: 1.5;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.queue-empty-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #16a34a;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 5px 12px;
+    border-radius: 6px;
+}
+
+:where(.dark) .queue-empty-status {
+    background: rgba(22, 163, 74, 0.1);
+    border-color: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.queue-empty-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #16a34a;
+    animation: queue-pulse 2s ease-in-out infinite;
+}
+
+:where(.dark) .queue-empty-status-dot {
+    background: #4ade80;
+}
+
+
+/* ---------- SKELETON CARDS ---------- */
+.queue-skeleton-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+@media (min-width: 768px) {
+    .queue-skeleton-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1280px) {
+    .queue-skeleton-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.queue-skeleton-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-main);
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: var(--shadow-main);
+}
+
+.queue-skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.queue-skeleton-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+}
+
+.queue-skeleton-line {
+    border-radius: 4px;
+}
+
+.queue-skeleton-details {
+    border-radius: 8px;
+    height: 80px;
+    margin-bottom: 14px;
+}
+
+.queue-skeleton-btn {
+    border-radius: 8px;
+    height: 40px;
+}

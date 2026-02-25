@@ -1,0 +1,882 @@
+/* ============================================
+   REVENUE & BILLING — Clinical Minimalism
+   ============================================
+   Enterprise-grade pharmacy financial dashboard
+   with billing, tax, and integration controls.
+   ============================================ */
+
+/* ---------- WORKSPACE ---------- */
+.rv-workspace {
+    max-width: 100%;
+}
+
+/* ---------- HERO BANNER ---------- */
+.rv-hero {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 160px;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #0f172a 0%, #0f3d2e 50%, #166534 100%);
+}
+
+@media (min-width: 768px) {
+    .rv-hero {
+        height: 180px;
+    }
+}
+
+.rv-hero-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 24px 28px;
+    gap: 16px;
+}
+
+.rv-hero-text {
+    max-width: 520px;
+}
+
+.rv-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    backdrop-filter: blur(4px);
+}
+
+.rv-hero-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+    .rv-hero-title {
+        font-size: 26px;
+    }
+}
+
+.rv-hero-subtitle {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.5;
+    margin: 0;
+    font-weight: 400;
+}
+
+.rv-hero-stats {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.rv-hero-stat {
+    text-align: center;
+    min-width: 72px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(4px);
+}
+
+.rv-hero-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 4px;
+    font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+.rv-hero-stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+@media (max-width: 767px) {
+    .rv-hero-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .rv-hero-stats {
+        align-self: flex-start;
+    }
+}
+
+
+/* ---------- TAB BAR ---------- */
+.rv-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-main);
+    border-radius: 10px;
+    box-shadow: var(--shadow-main);
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.rv-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #78716c;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: inherit;
+}
+
+.rv-tab:hover {
+    color: var(--text-main);
+    background: #fafaf9;
+}
+
+:where(.dark) .rv-tab:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.rv-tab--active {
+    color: #fff;
+    background: #166534;
+    box-shadow: 0 1px 3px rgba(22, 101, 52, 0.2);
+}
+
+.rv-tab--active:hover {
+    color: #fff;
+    background: #15803d;
+}
+
+.rv-tab-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ---------- STAT CARDS ---------- */
+.rv-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+    .rv-stat-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.rv-stat-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-main);
+    border-radius: 10px;
+    box-shadow: var(--shadow-main);
+    padding: 16px 18px;
+    transition: border-color 0.2s, transform 0.15s;
+}
+
+.rv-stat-card:hover {
+    border-color: #d6d3d1;
+    transform: translateY(-1px);
+}
+
+:where(.dark) .rv-stat-card:hover {
+    border-color: #57534e;
+}
+
+.rv-stat-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.rv-stat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.rv-stat-icon--green {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+.rv-stat-icon--blue {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #2563eb;
+}
+
+.rv-stat-icon--amber {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #ea580c;
+}
+
+.rv-stat-icon--teal {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    color: #0f766e;
+}
+
+:where(.dark) .rv-stat-icon--green {
+    background: rgba(22, 101, 52, 0.12);
+    border-color: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+:where(.dark) .rv-stat-icon--blue {
+    background: rgba(37, 99, 235, 0.10);
+    border-color: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+}
+
+:where(.dark) .rv-stat-icon--amber {
+    background: rgba(234, 88, 12, 0.10);
+    border-color: rgba(234, 88, 12, 0.2);
+    color: #fb923c;
+}
+
+:where(.dark) .rv-stat-icon--teal {
+    background: rgba(15, 118, 110, 0.10);
+    border-color: rgba(45, 212, 191, 0.2);
+    color: #2dd4bf;
+}
+
+.rv-stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #a8a29e;
+    margin: 0;
+}
+
+.rv-stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+    letter-spacing: -0.02em;
+    font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+
+/* ---------- CHART PANEL ---------- */
+.rv-chart-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-main);
+    border-radius: 12px;
+    box-shadow: var(--shadow-main);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.rv-chart-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #a8a29e;
+    margin: 0 0 16px;
+}
+
+.rv-chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 140px;
+}
+
+.rv-chart-bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.rv-chart-bar-value {
+    font-size: 10px;
+    font-weight: 700;
+    color: #166534;
+    font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+:where(.dark) .rv-chart-bar-value {
+    color: #4ade80;
+}
+
+.rv-chart-bar {
+    width: 100%;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, #166534, #0f3d2e);
+    transition: height 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 4px;
+}
+
+:where(.dark) .rv-chart-bar {
+    background: linear-gradient(180deg, #16a34a, #166534);
+}
+
+.rv-chart-bar-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #78716c;
+}
+
+
+/* ---------- TRANSACTIONS ---------- */
+.rv-tx-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-main);
+    border-radius: 12px;
+    box-shadow: var(--shadow-main);
+    overflow: hidden;
+}
+
+.rv-tx-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-main);
+}
+
+.rv-tx-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #a8a29e;
+    margin: 0;
+}
+
+.rv-tx-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-main);
+    transition: background 0.15s;
+}
+
+.rv-tx-row:last-child {
+    border-bottom: none;
+}
+
+.rv-tx-row:hover {
+    background: #fafaf9;
+}
+
+:where(.dark) .rv-tx-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.rv-tx-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rv-tx-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #166534;
+    flex-shrink: 0;
+}
+
+:where(.dark) .rv-tx-icon {
+    background: rgba(22, 101, 52, 0.12);
+    border-color: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.rv-tx-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.rv-tx-meta {
+    font-size: 11px;
+    color: #a8a29e;
+    margin: 2px 0 0;
+}
+
+.rv-tx-amount {
+    font-size: 14px;
+    font-weight: 700;
+    color: #166534;
+    font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+:where(.dark) .rv-tx-amount {
+    color: #4ade80;
+}
+
+.rv-tx-date {
+    font-size: 11px;
+    color: #a8a29e;
+    text-align: right;
+    margin: 2px 0 0;
+}
+
+
+/* ---------- FORM PANEL ---------- */
+.rv-form-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-main);
+    border-radius: 12px;
+    box-shadow: var(--shadow-main);
+    overflow: hidden;
+}
+
+.rv-form-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-main);
+}
+
+.rv-form-header-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #166534;
+    flex-shrink: 0;
+}
+
+:where(.dark) .rv-form-header-icon {
+    background: rgba(22, 101, 52, 0.12);
+    border-color: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.rv-form-header-text h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.rv-form-header-text p {
+    font-size: 12px;
+    color: #78716c;
+    margin: 2px 0 0;
+}
+
+.rv-form-body {
+    padding: 20px;
+}
+
+
+/* ---------- BILL ITEM ROW ---------- */
+.rv-bill-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fafaf9;
+    border: 1px solid var(--border-main);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    gap: 10px;
+    animation: rv-item-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+:where(.dark) .rv-bill-item {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+@keyframes rv-item-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.rv-bill-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.rv-bill-item-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rv-bill-item-code {
+    font-size: 11px;
+    color: #a8a29e;
+    font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+    margin: 0;
+}
+
+.rv-bill-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rv-qty-control {
+    display: flex;
+    align-items: center;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-main);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.rv-qty-btn {
+    padding: 4px 8px;
+    font-size: 13px;
+    color: #78716c;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 0.15s;
+}
+
+.rv-qty-btn:hover {
+    color: var(--text-main);
+}
+
+.rv-qty-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    min-width: 24px;
+    text-align: center;
+}
+
+.rv-bill-price {
+    font-size: 13px;
+    font-weight: 700;
+    color: #166534;
+    font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+    min-width: 60px;
+    text-align: right;
+}
+
+:where(.dark) .rv-bill-price {
+    color: #4ade80;
+}
+
+.rv-bill-remove {
+    font-size: 12px;
+    color: #a8a29e;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.15s;
+    font-family: inherit;
+}
+
+.rv-bill-remove:hover {
+    color: #dc2626;
+}
+
+
+/* ---------- SUMMARY CARD ---------- */
+.rv-summary-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-main);
+    border-radius: 12px;
+    box-shadow: var(--shadow-main);
+    padding: 20px;
+    position: sticky;
+    top: 20px;
+}
+
+.rv-summary-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #a8a29e;
+    margin: 0 0 16px;
+}
+
+.rv-summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+}
+
+.rv-summary-label {
+    color: #78716c;
+}
+
+.rv-summary-value {
+    font-weight: 600;
+    color: var(--text-main);
+    font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+.rv-summary-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0 0;
+    margin-top: 8px;
+    border-top: 2px solid var(--border-main);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.rv-summary-total-label {
+    color: var(--text-main);
+}
+
+.rv-summary-total-value {
+    color: #166534;
+    font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+:where(.dark) .rv-summary-total-value {
+    color: #4ade80;
+}
+
+
+/* ---------- BUTTONS ---------- */
+.rv-btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: #166534;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    font-family: inherit;
+}
+
+.rv-btn-primary:hover {
+    background: #15803d;
+}
+
+.rv-btn-primary:active {
+    transform: scale(0.98);
+}
+
+.rv-btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.rv-btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 9px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #78716c;
+    background: transparent;
+    border: 1px solid var(--border-main);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.rv-btn-secondary:hover {
+    color: var(--text-main);
+    background: #fafaf9;
+}
+
+:where(.dark) .rv-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.rv-btn-secondary:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+
+/* ---------- EMPTY SCANNER ---------- */
+.rv-empty-scanner {
+    text-align: center;
+    padding: 40px 24px;
+    border: 2px dashed var(--border-main);
+    border-radius: 12px;
+}
+
+.rv-empty-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: #fafaf9;
+    border: 1px solid var(--border-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a8a29e;
+    margin: 0 auto 14px;
+}
+
+:where(.dark) .rv-empty-icon {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.rv-empty-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0 0 4px;
+}
+
+.rv-empty-desc {
+    font-size: 12px;
+    color: #78716c;
+    margin: 0;
+}
+
+
+/* ---------- GST ROW ---------- */
+.rv-gst-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fafaf9;
+    border: 1px solid var(--border-main);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    gap: 12px;
+    transition: border-color 0.2s;
+}
+
+:where(.dark) .rv-gst-row {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.rv-gst-row:hover {
+    border-color: #d6d3d1;
+}
+
+:where(.dark) .rv-gst-row:hover {
+    border-color: #57534e;
+}
+
+.rv-gst-info h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.rv-gst-info p {
+    font-size: 11px;
+    color: #a8a29e;
+    margin: 2px 0 0;
+}
+
+.rv-gst-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ---------- LOADING ---------- */
+.rv-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+    gap: 14px;
+}
+
+.rv-loading-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--border-main);
+    border-top-color: #166534;
+    border-radius: 50%;
+    animation: rv-spin 0.7s linear infinite;
+}
+
+@keyframes rv-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rv-loading-text {
+    font-size: 13px;
+    color: #78716c;
+    font-weight: 500;
+}
