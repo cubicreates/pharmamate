@@ -8,7 +8,6 @@ import {
     User, Building2, Mail, Phone, MapPin, Award,
     ShieldCheck, Save, Settings, ChevronRight
 } from 'lucide-react';
-import './user-profile.css';
 
 export default function UserProfilePage() {
     const router = useRouter();

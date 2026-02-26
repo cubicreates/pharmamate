@@ -5,7 +5,6 @@ import Layout from '@/components/Layout';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { apiRequest } from '@/lib/utils/api';
 import { Send, CheckCircle, Clock, MessageCircle, Info, Search } from 'lucide-react';
-import './clinician-connect.css';
 
 interface QueryLog {
     id: string;

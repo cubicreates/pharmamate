@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { useRouter } from 'next/navigation';
 import { Plus, Search } from 'lucide-react';
-import '../orders/orders.css';
 
 interface Delivery {
     _id: string; patientName: string; orderId: string;

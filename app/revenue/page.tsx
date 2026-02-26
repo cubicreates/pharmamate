@@ -9,7 +9,6 @@ import {
     FileText, Link2, Plus, Minus, X, CheckCircle,
     Printer, Download, ExternalLink, Plug, Save, Search
 } from 'lucide-react';
-import './revenue.css';
 
 interface OrderItem {
     name: string; dosage: string; quantity: number; price: number; salt?: string;

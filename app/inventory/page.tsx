@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo, memo, useCallback } from 'react';
 import Layout from '@/components/Layout';
 import { useRouter } from 'next/navigation';
 import { apiRequest } from '@/lib/utils/api';
-import './inventory.css';
 import MassEntryGrid from '@/components/inventory/MassEntryGrid';
 import {
     LayoutGrid,

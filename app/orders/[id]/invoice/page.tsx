@@ -5,7 +5,6 @@ import Layout from '@/components/Layout';
 import { useRouter } from 'next/navigation';
 import { apiRequest } from '@/lib/utils/api';
 import { Printer, MessageCircle, ArrowLeft, AlertTriangle, Inbox } from 'lucide-react';
-import '../../orders.css';
 
 interface OrderItem {
     name: string; dosage: string; quantity: number; price: number; salt?: string;

@@ -26,7 +26,6 @@ import {
     ScanLine,
     Printer,
 } from 'lucide-react';
-import './counter.css';
 
 interface Medicine {
     name: string; dosage: string; frequency: string; duration: string; salt: string;

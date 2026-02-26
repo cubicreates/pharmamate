@@ -458,58 +458,58 @@ export default function Layout({ children, onLogout }: LayoutProps) {
 
         {/* ===== Z-REPORT / DAILY CLOSING MODAL ===== */}
         {showZReport && (
-          <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-fade-in" onClick={() => setShowZReport(false)}>
-            <div className="bg-surface border border-border-subtle rounded-3xl shadow-2xl p-8 max-w-lg w-full animate-scale-in" onClick={e => e.stopPropagation()}>
-              <div className="flex justify-between items-start mb-8">
+          <div className="zreport-backdrop" onClick={() => setShowZReport(false)}>
+            <div className="zreport-modal" onClick={e => e.stopPropagation()}>
+              <div className="zreport-header">
                 <div>
-                  <h3 className="text-2xl font-black tracking-tight text-foreground italic flex items-center gap-2">
+                  <h3 className="zreport-title">
                     <Zap className="text-primary fill-primary" size={24} /> Day Closing Report
                   </h3>
-                  <p className="text-xs font-bold text-muted uppercase tracking-widest mt-1">Shift Reconciliation · {new Date().toLocaleDateString()}</p>
+                  <p className="zreport-subtitle">Shift Reconciliation · {new Date().toLocaleDateString()}</p>
                 </div>
                 <button onClick={() => setShowZReport(false)} className="text-muted hover:text-foreground transition-colors p-2 bg-stone-100 dark:bg-stone-800 rounded-full">
                   <RefreshCcw size={16} />
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-8">
-                <div className="p-4 bg-stone-50 dark:bg-stone-900 rounded-2xl border border-border-subtle">
-                  <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Total Sales</p>
-                  <p className="text-xl font-black text-primary">₹1,42,560.00</p>
+              <div className="zreport-grid">
+                <div className="zreport-stat-card">
+                  <p className="zreport-stat-label">Total Sales</p>
+                  <p className="zreport-stat-value zreport-stat-value--primary">₹1,42,560.00</p>
                 </div>
-                <div className="p-4 bg-stone-50 dark:bg-stone-900 rounded-2xl border border-border-subtle">
-                  <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Cash In Drawer</p>
-                  <p className="text-xl font-black text-foreground">₹24,800.00</p>
+                <div className="zreport-stat-card">
+                  <p className="zreport-stat-label">Cash In Drawer</p>
+                  <p className="zreport-stat-value">₹24,800.00</p>
                 </div>
-                <div className="p-4 bg-stone-50 dark:bg-stone-900 rounded-2xl border border-border-subtle col-span-2">
-                  <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">GST Collected (Central + State)</p>
-                  <p className="text-xl font-black text-emerald-600">₹17,107.20</p>
+                <div className="zreport-stat-card col-span-2">
+                  <p className="zreport-stat-label">GST Collected (Central + State)</p>
+                  <p className="zreport-stat-value zreport-stat-value--success">₹17,107.20</p>
                 </div>
               </div>
 
-              <div className="space-y-3 mb-8">
-                <div className="flex items-center justify-between text-xs font-medium py-2 border-b border-border-subtle">
-                  <span className="text-muted">UPI Transactions (42)</span>
+              <div className="space-y-1 mb-8">
+                <div className="zreport-row">
+                  <span className="zreport-row-label">UPI Transactions (42)</span>
                   <span>₹98,400.00</span>
                 </div>
-                <div className="flex items-center justify-between text-xs font-medium py-2 border-b border-border-subtle">
-                  <span className="text-muted">Credit / B2B Outs</span>
+                <div className="zreport-row">
+                  <span className="zreport-row-label">Credit / B2B Outs</span>
                   <span>₹19,360.00</span>
                 </div>
               </div>
 
-              <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/30 rounded-2xl flex gap-3 mb-8">
+              <div className="zreport-alert">
                 <ShieldCheck className="text-yellow-600 flex-shrink-0" size={20} />
                 <p className="text-xs font-medium text-yellow-800 dark:text-yellow-400">
                   Daily stock audit shows 2 discrepancies in Antibiotics section. Please verify Batch #S992 before closing.
                 </p>
               </div>
 
-              <div className="flex gap-3">
-                <button onClick={() => setShowZReport(false)} className="flex-1 py-4 bg-stone-100 dark:bg-stone-800 rounded-2xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition-all">
+              <div className="zreport-actions">
+                <button onClick={() => setShowZReport(false)} className="zreport-btn-secondary">
                   Save Draft
                 </button>
-                <button onClick={() => { alert('End of Day Report (Z-Report) generated and sent to Cloud.'); setShowZReport(false); }} className="flex-[2] py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/30 hover:bg-primary-light transition-all flex items-center justify-center gap-2">
+                <button onClick={() => { alert('End of Day Report (Z-Report) generated and sent to Cloud.'); setShowZReport(false); }} className="zreport-btn-primary">
                   Generate Z-Report & Logout <ChevronRight size={16} />
                 </button>
               </div>

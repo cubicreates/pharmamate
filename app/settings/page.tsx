@@ -7,7 +7,6 @@ import {
     Settings, Shield, Bell, Eye, Palette, Globe, Monitor,
     Moon, Sun, Lock, Trash2, LogOut, ChevronRight
 } from 'lucide-react';
-import './settings.css';
 
 interface ToggleProps {
     active: boolean;

@@ -15,7 +15,6 @@ import {
     CheckCircle2,
     Search
 } from 'lucide-react';
-import './queue.css';
 
 interface QueueItem {
     _id: string;

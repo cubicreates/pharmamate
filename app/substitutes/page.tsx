@@ -5,7 +5,6 @@ import Layout from '@/components/Layout';
 import { useRouter } from 'next/navigation';
 import { apiRequest } from '@/lib/utils/api';
 import { Search, ArrowRight, MapPin, AlertTriangle, Package } from 'lucide-react';
-import './substitutes.css';
 
 interface SubstituteItem {
     _id: string;

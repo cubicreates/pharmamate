@@ -15,7 +15,6 @@ import {
     Activity,
     Search
 } from 'lucide-react';
-import './orders.css';
 
 interface OrderItem {
     name: string; dosage: string; quantity: number; price: number; salt?: string;
