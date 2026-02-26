@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { apiRequest } from '@/lib/utils/api';
-import { Send, CheckCircle, Clock, MessageCircle, Info } from 'lucide-react';
+import { Send, CheckCircle, Clock, MessageCircle, Info, Search } from 'lucide-react';
 import './clinician-connect.css';
 
 interface QueryLog {
@@ -29,6 +29,7 @@ function ClinicianConnectContent() {
     const [clinic, setClinic] = useState(prefillClinic);
     const [message, setMessage] = useState('');
     const [queryStatus, setQueryStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
+    const [searchQuery, setSearchQuery] = useState('');
     const [queryLogs, setQueryLogs] = useState<QueryLog[]>([]);
 
     const handleLogout = () => {
@@ -259,6 +260,17 @@ function ClinicianConnectContent() {
                         <div className="cc-history-panel">
                             <div className="cc-history-header">
                                 <h3 className="cc-history-title">Consultation Log</h3>
+                                <div className="relative flex-1 max-w-[200px]">
+                                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-muted" size={14} />
+                                    <input
+                                        type="text"
+                                        data-search-global
+                                        placeholder="Filter logs... (/)"
+                                        className="w-full bg-surface border border-border-subtle rounded-md pl-8 pr-2 py-1 text-xs outline-none focus:ring-2 focus:ring-primary/20"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
+                                </div>
                                 <span className="cc-history-count">
                                     {queryLogs.length} {queryLogs.length === 1 ? 'entry' : 'entries'}
                                 </span>
@@ -276,7 +288,11 @@ function ClinicianConnectContent() {
                                 </div>
                             ) : (
                                 <div className="cc-history-list">
-                                    {queryLogs.map((log, i) => (
+                                    {queryLogs.filter(log =>
+                                        log.doctorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                        log.patientPrn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                        log.message.toLowerCase().includes(searchQuery.toLowerCase())
+                                    ).map((log, i) => (
                                         <div
                                             key={log.id}
                                             className="cc-query-card"

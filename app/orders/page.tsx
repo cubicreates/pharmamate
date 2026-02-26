@@ -12,7 +12,8 @@ import {
     Inbox,
     FileText,
     ShoppingBag,
-    Activity
+    Activity,
+    Search
 } from 'lucide-react';
 import './orders.css';
 
@@ -33,6 +34,7 @@ export default function OrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
     const [user, setUser] = useState<{ _id?: string }>({});
 
     const handleLogout = () => {
@@ -60,7 +62,12 @@ export default function OrdersPage() {
     }, [user._id]);
 
     const filters = ['All', 'Pending', 'Ready', 'Completed'];
-    const filtered = statusFilter === 'All' ? orders : orders.filter(o => o.status === statusFilter);
+    const filtered = orders.filter(o => {
+        const matchesStatus = statusFilter === 'All' || o.status === statusFilter;
+        const matchesSearch = o.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            o.patientPrn.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesStatus && matchesSearch;
+    });
 
     const handleMarkReady = async (order: Order) => {
         setOrders(prev => prev.map(o => o._id === order._id ? { ...o, status: 'Ready' } : o));
@@ -149,11 +156,18 @@ export default function OrdersPage() {
 
                 {/* ===== Toolbar: Section Title & Filters ===== */}
                 <div className="orders-toolbar">
-                    <div>
-                        <h2 className="orders-section-title">
-                            Prescription Orders
-                            <span className="orders-section-count">({filtered.length})</span>
-                        </h2>
+                    <div className="flex flex-col md:flex-row gap-4 flex-1 max-w-2xl">
+                        <div className="relative flex-1">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
+                            <input
+                                type="text"
+                                data-search-global
+                                placeholder="Search by patient name or PRN... (Press /)"
+                                className="w-full bg-surface border border-border-subtle rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
                     </div>
                     <div className="orders-filters">
                         {filters.map(f => (

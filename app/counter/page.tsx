@@ -24,6 +24,7 @@ import {
     Pill,
     ChevronRight,
     ScanLine,
+    Printer,
 } from 'lucide-react';
 import './counter.css';
 
@@ -58,6 +59,8 @@ export default function CounterPage() {
     const [showDoctorQuery, setShowDoctorQuery] = useState(false);
     const [doctorQueryMessage, setDoctorQueryMessage] = useState('');
     const [queryStatus, setQueryStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
+    const [paymentMethod, setPaymentMethod] = useState<'Cash' | 'UPI' | 'Credit'>('Cash');
+    const [isFulfilled, setIsFulfilled] = useState(false);
     const searchRef = useRef<HTMLInputElement>(null);
     const [mounted, setMounted] = useState(false);
 
@@ -153,9 +156,26 @@ export default function CounterPage() {
         } catch { setQueryStatus('idle'); }
     };
 
+    const handlePrintLabels = () => {
+        window.print();
+    };
+
     const handleCloseSession = () => {
         setPrescription(null); setPatientPrn(''); setOtp('');
         setOtpStatus('idle'); setShowSubstitutes(null); setSubstitutes({});
+        setIsFulfilled(false);
+    };
+
+    const handleShareWhatsApp = () => {
+        if (!prescription) return;
+        const total = prescription.medicines.length * 150; // Mock calculation
+        const text = `Hi ${prescription.patientName}, your order from MediCare Pharmacy is ready. Total: ₹${total}. Track here: https://pharmamate.app/track/${prescription.patientPrn}`;
+        window.open(`https://wa.me/${prescription.doctorPhone}?text=${encodeURIComponent(text)}`, '_blank');
+    };
+
+    const handleFulfill = async () => {
+        setIsFulfilled(true);
+        // In a real app, this would call /api/orders/fulfill
     };
 
     return (
@@ -373,10 +393,35 @@ export default function CounterPage() {
                                     }) : ''}
                                 </span>
                             </div>
-                            <button onClick={handleCloseSession} className="counter-session-close">
-                                <Lock size={14} />
-                                End Session
-                            </button>
+                            <div className="flex items-center gap-3">
+                                <button onClick={handlePrintLabels} className="counter-session-btn counter-session-btn--print">
+                                    <Printer size={14} />
+                                    Print Labels
+                                </button>
+                                <button onClick={handleCloseSession} className="counter-session-close">
+                                    <Lock size={14} />
+                                    End Session
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* --- Hidden Printable Area (Stage 2 Architecture) --- */}
+                        <div className="printable-area hidden print:block">
+                            <div className="flex flex-wrap gap-4 p-8">
+                                {prescription.medicines.map((med, i) => (
+                                    <div key={i} className="print-label">
+                                        <div className="print-label-header">{med.name}</div>
+                                        <div className="print-label-dosage">
+                                            {med.dosage} — {med.frequency}<br />
+                                            {med.duration}
+                                        </div>
+                                        <div className="print-label-footer">
+                                            <span>PRN: {prescription.patientPrn}</span>
+                                            <span>{mounted ? new Date().toLocaleDateString() : ''}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         {/* Info Cards Row */}
@@ -506,6 +551,94 @@ export default function CounterPage() {
                                         ))}
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+
+                        {/* --- Checkout / Fulfillment Section --- */}
+                        <div className="mt-8 flex flex-col lg:flex-row gap-6 pb-12">
+                            <div className="flex-1 bg-surface border border-border-subtle rounded-2xl p-6 shadow-sm">
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted mb-4 flex items-center gap-2">
+                                    <ShieldCheck size={16} className="text-primary" />
+                                    Review & Verify
+                                </h3>
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between p-4 bg-stone-50 dark:bg-stone-900 rounded-xl border border-border-subtle">
+                                        <div>
+                                            <p className="text-sm font-bold">Cold Chain Drugs</p>
+                                            <p className="text-xs text-muted">Requires refrigerated storage</p>
+                                        </div>
+                                        <span className="badge badge-info uppercase text-[10px] bg-stone-100 dark:bg-stone-800 text-muted px-2 py-0.5 rounded">None Detected</span>
+                                    </div>
+                                    <div className="flex items-center justify-between p-4 bg-stone-50 dark:bg-stone-900 rounded-xl border border-border-subtle">
+                                        <div>
+                                            <p className="text-sm font-bold">Schedule H1 Compliance</p>
+                                            <p className="text-xs text-muted">Narcotics/Restricted protocols</p>
+                                        </div>
+                                        <span className="badge badge-success uppercase text-[10px] bg-success/10 text-success px-2 py-0.5 rounded font-bold">Verified</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="lg:w-96 bg-surface border border-border-subtle rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                                {isFulfilled && (
+                                    <div className="absolute inset-0 bg-white/95 dark:bg-stone-900/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center animate-fade-in text-center p-6">
+                                        <div className="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mb-4">
+                                            <CheckCircle2 size={32} />
+                                        </div>
+                                        <h4 className="text-xl font-black mb-2">Order Fulfilled</h4>
+                                        <p className="text-sm text-muted mb-6 font-mono tracking-tighter">Invoice #PH-INV-{Date.now().toString(36).toUpperCase()}</p>
+                                        <div className="flex flex-col gap-2 w-full">
+                                            <button onClick={handleShareWhatsApp} className="w-full py-3 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+                                                <Send size={16} /> Share on WhatsApp
+                                            </button>
+                                            <button onClick={handlePrintLabels} className="w-full py-3 bg-stone-100 dark:bg-stone-800 rounded-xl font-bold text-sm">
+                                                Print Paper Copy
+                                            </button>
+                                            <button onClick={handleCloseSession} className="w-full py-3 text-primary font-bold text-sm mt-4 hover:underline">
+                                                Prepare Next Patient Look-up
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="flex justify-between items-center mb-6">
+                                    <h3 className="text-lg font-black italic tracking-tight">Checkout</h3>
+                                    <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-1 rounded">GST READY</span>
+                                </div>
+
+                                <div className="space-y-3 mb-6">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted">Subtotal</span>
+                                        <span className="font-medium">₹{(prescription.medicines.length * 150).toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted">GST (12%)</span>
+                                        <span className="font-medium">₹{(prescription.medicines.length * 150 * 0.12).toFixed(2)}</span>
+                                    </div>
+                                    <div className="pt-3 border-t border-border-subtle flex justify-between items-center">
+                                        <span className="font-bold">Grand Total</span>
+                                        <span className="text-2xl font-black text-primary">₹{(prescription.medicines.length * 150 * 1.12).toFixed(2)}</span>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 mb-6">
+                                    <p className="text-[10px] font-bold text-muted uppercase tracking-widest">Payment Method</p>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {(['Cash', 'UPI', 'Credit'] as const).map(method => (
+                                            <button
+                                                key={method}
+                                                onClick={() => setPaymentMethod(method)}
+                                                className={`py-2 rounded-lg text-[10px] font-bold border transition-all ${paymentMethod === method ? 'bg-primary/5 border-primary text-primary' : 'bg-stone-50 dark:bg-stone-900 border-border-subtle text-muted'}`}
+                                            >
+                                                {method}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <button onClick={handleFulfill} className="w-full py-4 bg-primary text-white rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/30 hover:bg-primary-light transition-all flex items-center justify-center gap-2">
+                                    Complete Dispensing <ArrowRight size={16} />
+                                </button>
                             </div>
                         </div>
                     </div>

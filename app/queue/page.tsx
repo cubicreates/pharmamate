@@ -13,7 +13,7 @@ import {
     Hourglass,
     Activity,
     CheckCircle2,
-    Store,
+    Search
 } from 'lucide-react';
 import './queue.css';
 
@@ -54,6 +54,7 @@ export default function QueuePage() {
     const router = useRouter();
     const [queue, setQueue] = useState<QueueItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const handleLogout = () => {
         localStorage.removeItem('chemToken');
@@ -92,6 +93,11 @@ export default function QueuePage() {
         waiting: queue.filter(q => q.status === 'waiting').length,
         serving: queue.filter(q => q.status === 'serving').length,
     };
+
+    const filteredQueue = queue.filter(q =>
+        q.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        q.patientPrn.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <Layout onLogout={handleLogout}>
@@ -136,7 +142,18 @@ export default function QueuePage() {
                 {/* ── Status Bar ── */}
                 {!loading && queue.length > 0 && (
                     <div className="queue-status-bar">
-                        <div className="queue-status-group">
+                        <div className="flex-1 max-w-md relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
+                            <input
+                                type="text"
+                                data-search-global
+                                placeholder="Filter queue... (/)"
+                                className="w-full bg-surface border border-border-subtle rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+                        <div className="queue-status-group hidden md:flex">
                             <div className="queue-status-item">
                                 <span className="queue-status-dot queue-status-dot--verifying" />
                                 Verifying
@@ -176,23 +193,19 @@ export default function QueuePage() {
                             </div>
                         ))}
                     </div>
-                ) : queue.length === 0 ? (
+                ) : filteredQueue.length === 0 ? (
                     <div className="queue-empty">
                         <div className="queue-empty-icon">
-                            <Store size={28} strokeWidth={1.5} />
+                            <Search size={28} strokeWidth={1.5} />
                         </div>
-                        <h3 className="queue-empty-title">No patients at counter</h3>
+                        <h3 className="queue-empty-title">No matches found</h3>
                         <p className="queue-empty-desc">
-                            The queue is currently empty. Patients will appear here automatically when they arrive and check in.
+                            We couldn&apos;t find any patient in the queue matching &quot;{searchQuery}&quot;.
                         </p>
-                        <div className="queue-empty-status">
-                            <span className="queue-empty-status-dot" />
-                            Counter Ready
-                        </div>
                     </div>
                 ) : (
                     <div className="queue-grid">
-                        {queue.map((q, i) => {
+                        {filteredQueue.map((q, i) => {
                             const config = STATUS_CONFIG[q.status] || STATUS_CONFIG.waiting;
                             const wait = waitMinutes(q.arrivedAt);
                             const isUrgent = wait > 10;

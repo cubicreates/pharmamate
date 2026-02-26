@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { useRouter } from 'next/navigation';
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import '../orders/orders.css';
 
 interface Delivery {
@@ -15,6 +15,7 @@ interface Delivery {
 export default function DispatchTrackingPage() {
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const [deliveries] = useState<Delivery[]>([
         { _id: '1', patientName: 'Rahul Sharma', orderId: 'ORD-102', riderName: 'Suresh Kumar', riderPhone: '+91 99887 76655', status: 'in-transit', isColdChain: true, dispatchedAt: '2026-02-24T13:00:00.000Z', total: 1250 },
         { _id: '2', patientName: 'Sneha Desai', orderId: 'ORD-105', riderName: 'Amit Singh', riderPhone: '+91 88776 65544', status: 'delivered', isColdChain: false, dispatchedAt: '2026-02-24T12:30:00.000Z', total: 850 },
@@ -77,12 +78,25 @@ export default function DispatchTrackingPage() {
 
                 {/* Deliveries Table */}
                 <div className="dispatch-table-container">
-                    <div className="dispatch-table-header">
-                        <h3>Active Deliveries</h3>
-                        <span className="dispatch-live-badge">
-                            <span className="dispatch-live-dot" />
-                            Live Tracking
-                        </span>
+                    <div className="dispatch-table-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <h3>Active Deliveries</h3>
+                            <span className="dispatch-live-badge">
+                                <span className="dispatch-live-dot" />
+                                Live Tracking
+                            </span>
+                        </div>
+                        <div className="relative flex-1 max-w-sm">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={14} />
+                            <input
+                                type="text"
+                                data-search-global
+                                placeholder="Search deliveries... (/)"
+                                className="w-full bg-surface border border-border-subtle rounded-lg pl-9 pr-4 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
                     </div>
                     <div className="orders-table-wrap">
                         <table className="orders-table">
@@ -97,7 +111,11 @@ export default function DispatchTrackingPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {deliveries.map((delivery) => (
+                                {deliveries.filter(d =>
+                                    d.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    d.orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    d.riderName.toLowerCase().includes(searchQuery.toLowerCase())
+                                ).map((delivery) => (
                                     <tr key={delivery._id}>
                                         <td>
                                             <p className="orders-patient-name">{delivery.patientName}</p>

@@ -223,3 +223,161 @@ html.dark .skeleton::after {
       rgba(255, 255, 255, 0.05),
       transparent);
 }
+
+/* ============================================
+   PRINT ARCHITECTURE (Hardware Prep)
+   ============================================ */
+@media print {
+
+  /* Hide unwanted browser elements */
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  header,
+  aside,
+  .no-print,
+  nav,
+  #ai-assistant {
+    display: none !important;
+  }
+
+  /* Container for printable content */
+  .printable-area,
+  .printable-area * {
+    visibility: visible;
+  }
+
+  .printable-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* --- THERMAL MEDICINE LABEL (50mm x 25mm) --- */
+  .print-label {
+    width: 50mm;
+    height: 25mm !important;
+    padding: 2mm;
+    background: white !important;
+    color: black !important;
+    font-family: 'Inter', sans-serif;
+    border: 0.1mm solid #eee;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    page-break-inside: avoid;
+  }
+
+  .print-label-header {
+    font-size: 8pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .print-label-dosage {
+    font-size: 7pt;
+    line-height: 1.1;
+    color: #444;
+  }
+
+  .print-label-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 5.5pt;
+    font-weight: 600;
+    border-top: 0.1mm solid #eee;
+    padding-top: 1mm;
+  }
+
+  /* --- CLINICAL INVOICE (A5/A4 Thermal) --- */
+  .print-invoice {
+    width: 100%;
+    padding: 10mm;
+    background: white !important;
+    color: black !important;
+  }
+
+  .print-invoice-title {
+    font-size: 18pt;
+    font-weight: 800;
+    text-align: center;
+    border-bottom: 0.5mm solid black;
+    padding-bottom: 5mm;
+    margin-bottom: 5mm;
+  }
+
+  .print-invoice-total {
+    text-align: right;
+    font-size: 12pt;
+    font-weight: 800;
+    border-top: 0.5mm solid black;
+    padding-top: 3mm;
+  }
+}
+
+/* ============================================
+   PRECISION MODE (Power User UI Density)
+   ============================================ */
+.precision-view {
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.75rem;
+}
+
+/* Hide decorative banners for maximum focus */
+.precision-view .inv-hero,
+.precision-view .counter-hero,
+.precision-view .hero-section {
+  display: none !important;
+}
+
+/* Tighten workspace padding */
+.precision-view main {
+  padding: 0.75rem !important;
+}
+
+/* Compact data cards */
+.precision-view .inv-stat-card,
+.precision-view .glass-card {
+  padding: 0.75rem 1rem !important;
+}
+
+.precision-view .inv-stat-value {
+  font-size: 1.25rem !important;
+}
+
+/* High-density data tables */
+.precision-view table th,
+.precision-view .table-pro th,
+.precision-view .inv-table th {
+  padding: 0.5rem 0.75rem !important;
+  font-size: 9px !important;
+}
+
+.precision-view table td,
+.precision-view .table-pro td,
+.precision-view .inv-table td {
+  padding: 0.35rem 0.75rem !important;
+  font-size: 12px !important;
+}
+
+/* Compact navigation */
+.precision-view .inv-tab-bar {
+  margin-bottom: 0.75rem !important;
+  padding: 2px !important;
+}
+
+.precision-view .inv-tab {
+  padding: 0.4rem 0.75rem !important;
+  font-size: 12px !important;
+}

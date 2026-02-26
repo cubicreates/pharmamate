@@ -7,7 +7,7 @@ import { apiRequest } from '@/lib/utils/api';
 import {
     TrendingUp, Calendar, Receipt, BarChart3, ScanBarcode,
     FileText, Link2, Plus, Minus, X, CheckCircle,
-    Printer, Download, ExternalLink, Plug, Save
+    Printer, Download, ExternalLink, Plug, Save, Search
 } from 'lucide-react';
 import './revenue.css';
 
@@ -36,6 +36,7 @@ export default function RevenuePage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<TabId>('overview');
+    const [searchQuery, setSearchQuery] = useState('');
     const [user, setUser] = useState<{ _id?: string; shopName?: string }>({});
 
     const [barcodeInput, setBarcodeInput] = useState('');
@@ -242,10 +243,24 @@ export default function RevenuePage() {
                                 </div>
 
                                 <div className="rv-tx-panel">
-                                    <div className="rv-tx-header">
+                                    <div className="rv-tx-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
                                         <h3 className="rv-tx-title">Recent Transactions</h3>
+                                        <div className="relative flex-1 max-w-sm">
+                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={14} />
+                                            <input
+                                                type="text"
+                                                data-search-global
+                                                placeholder="Search transactions... (/)"
+                                                className="w-full bg-surface border border-border-subtle rounded-lg pl-9 pr-4 py-1.5 text-xs outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                            />
+                                        </div>
                                     </div>
-                                    {completed.slice(0, 8).map((o, i) => (
+                                    {completed.filter(o =>
+                                        o.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                        (o.doctorName && o.doctorName.toLowerCase().includes(searchQuery.toLowerCase()))
+                                    ).slice(0, 8).map((o, i) => (
                                         <div key={o._id} className="rv-tx-row animate-fade-in" style={{ animationDelay: `${i * 40}ms` }}>
                                             <div className="rv-tx-info">
                                                 <div className="rv-tx-icon">

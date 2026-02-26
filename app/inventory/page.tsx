@@ -5,10 +5,10 @@ import Layout from '@/components/Layout';
 import { useRouter } from 'next/navigation';
 import { apiRequest } from '@/lib/utils/api';
 import './inventory.css';
+import MassEntryGrid from '@/components/inventory/MassEntryGrid';
 import {
     LayoutGrid,
     Download,
-    ShieldCheck,
     Search,
     MapPin,
     Tag,
@@ -22,21 +22,22 @@ import {
     Settings,
     History,
     RefreshCcw,
-    Truck,
     ChevronRight,
     Pill,
     IndianRupee,
     Boxes,
-    ClipboardList
+    ClipboardList,
+    Calculator
 } from 'lucide-react';
 
-type TabId = 'overview' | 'stock' | 'inward' | 'admin';
+type TabId = 'overview' | 'stock' | 'inward' | 'bulk' | 'admin';
 
 interface InventoryItem {
     _id: string; name: string; category: string;
     stock: number; reorderLevel: number; price: number;
     expiryDate: string; manufacturer: string;
     shelf: string; batchNo: string; salt: string;
+    hsnCode: string; gstRate: number; schedule: string;
 }
 
 // Mock audit data
@@ -48,13 +49,7 @@ const AUDIT_LOG = [
     { id: 5, action: 'Reorder Level Updated', detail: 'Azithromycin 250mg — Reorder level → 50 units', user: 'Admin', time: '3 days ago', type: 'adjust' },
 ];
 
-// Mock supplier data
-const SUPPLIERS = [
-    { id: 1, name: 'Cipla Pharma Ltd.', contact: '+91 98765 43210', status: 'reliable', initials: 'CP' },
-    { id: 2, name: 'GSK India', contact: '+91 87654 32100', status: 'reliable', initials: 'GS' },
-    { id: 3, name: 'Sun Pharmaceutical', contact: '+91 76543 21000', status: 'avg', initials: 'SP' },
-    { id: 4, name: 'Lupin Limited', contact: '+91 65432 10987', status: 'reliable', initials: 'LL' },
-];
+
 
 // --- SUB-COMPONENTS (MEMOIZED) ---
 
@@ -104,95 +99,99 @@ const InventoryOverview = memo(({
                 <div className="inv-stat-value">{loading ? '—' : expiringSoonCount}</div>
                 <div className="inv-stat-sub">Approaching expiry date</div>
             </div>
+            {/* AI Prediction Badge */}
+            <div className="inv-stat-card border-2 border-primary/20 bg-primary/[0.02]">
+                <div className="inv-stat-label text-primary">
+                    <div className="inv-stat-icon bg-primary/10"><TrendingUp size={15} /></div>
+                    AI Demand Alert
+                </div>
+                <div className="inv-stat-value text-primary font-black">↑ 32%</div>
+                <div className="inv-stat-sub text-primary/70 font-bold">Anti-allergics (March Forecast)</div>
+            </div>
         </div>
 
-        <div className="inv-table-card">
-            <div className="inv-table-header">
-                <div className="inv-table-title-row">
-                    <AlertCircle size={16} />
-                    <h3>Items Requiring Attention</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <div className="inv-table-card">
+                <div className="inv-table-header">
+                    <div className="inv-table-title-row">
+                        <AlertCircle size={16} />
+                        <h3>Items Requiring Attention</h3>
+                    </div>
+                    <div className="inv-table-actions">
+                        <button type="button" className="inv-action-btn" onClick={() => setActiveTab('stock')}>
+                            View All <ChevronRight size={14} />
+                        </button>
+                    </div>
                 </div>
-                <div className="inv-table-actions">
-                    <button type="button" className="inv-action-btn" onClick={() => setActiveTab('stock')}>
-                        View All <ChevronRight size={14} />
-                    </button>
+                <div className="inv-table-wrap">
+                    {loading ? (
+                        <div className="inv-loading py-12">
+                            <div className="inv-spinner" />
+                            <span>Loading inventory...</span>
+                        </div>
+                    ) : (
+                        <table className="inv-table">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Status</th>
+                                    <th>Stock</th>
+                                    <th>Expiry</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {inventory
+                                    .filter(i => i.stock <= i.reorderLevel || new Date(i.expiryDate) < new Date(Date.now() + 90 * 24 * 60 * 60 * 1000))
+                                    .slice(0, 5)
+                                    .map(item => {
+                                        const isLow = item.stock <= item.reorderLevel;
+                                        const isExpired = new Date(item.expiryDate) < new Date();
+                                        return (
+                                            <tr key={item._id}>
+                                                <td className="font-bold text-sm">{item.name}</td>
+                                                <td>
+                                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${isExpired ? 'bg-danger/10 text-danger' : 'bg-warning/10 text-warning'}`}>
+                                                        {isExpired ? 'EXPIRED' : isLow ? 'LOW STOCK' : 'EXPIRING'}
+                                                    </span>
+                                                </td>
+                                                <td className="text-sm">{item.stock}</td>
+                                                <td className="text-sm font-mono">{new Date(item.expiryDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}</td>
+                                            </tr>
+                                        );
+                                    })}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
-            <div className="inv-table-wrap">
-                {loading ? (
-                    <div className="inv-loading">
-                        <div className="inv-spinner" />
-                        <span>Loading overview...</span>
+
+            <div className="inv-table-card border-primary/20 bg-primary/[0.01]">
+                <div className="inv-table-header">
+                    <div className="inv-table-title-row text-primary">
+                        <TrendingUp size={16} />
+                        <h3 className="font-black italic">AI Liquidation Optimizer</h3>
                     </div>
-                ) : (
-                    <table className="inv-table">
-                        <thead>
-                            <tr>
-                                <th>Medicine</th>
-                                <th>Status</th>
-                                <th>Stock</th>
-                                <th>Expiry</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {inventory
-                                .filter(i => i.stock <= i.reorderLevel || new Date(i.expiryDate) < new Date(Date.now() + 90 * 24 * 60 * 60 * 1000))
-                                .slice(0, 8)
-                                .map(item => {
-                                    const isLow = item.stock <= item.reorderLevel;
-                                    const isExpired = new Date(item.expiryDate) < new Date();
-                                    return (
-                                        <tr key={item._id}>
-                                            <td>
-                                                <div className="inv-med-cell">
-                                                    <div className={`inv-stock-indicator ${isLow ? 'inv-stock-indicator--low' : 'inv-stock-indicator--ok'}`} />
-                                                    <div>
-                                                        <p className="inv-med-name">{item.name}</p>
-                                                        <p className="inv-med-mfr">{item.manufacturer}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                {isExpired ? (
-                                                    <span className="inv-expiry-badge inv-expiry-badge--expired">Expired</span>
-                                                ) : isLow ? (
-                                                    <span className="inv-expiry-badge inv-expiry-badge--soon">Low Stock</span>
-                                                ) : (
-                                                    <span className="inv-expiry-badge inv-expiry-badge--soon">Expiring Soon</span>
-                                                )}
-                                            </td>
-                                            <td>
-                                                <span className={`inv-stock-val ${isLow ? 'inv-stock-val--low' : ''}`}>{item.stock}</span>
-                                                <span className="inv-stock-unit">units</span>
-                                            </td>
-                                            <td>
-                                                <span className={`inv-expiry-badge ${isExpired ? 'inv-expiry-badge--expired' : 'inv-expiry-badge--soon'}`}>
-                                                    {isExpired ? 'EXPIRED' : new Date(item.expiryDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <button type="button" className="inv-action-btn" onClick={() => setActiveTab('inward')}>
-                                                    {isLow ? 'Reorder' : 'Review'}
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            {!loading && inventory.filter(i => i.stock <= i.reorderLevel || new Date(i.expiryDate) < new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)).length === 0 && (
-                                <tr>
-                                    <td colSpan={5}>
-                                        <div className="inv-empty-state">
-                                            <div className="inv-empty-icon"><ShieldCheck size={24} /></div>
-                                            <p className="inv-empty-title">All Clear</p>
-                                            <p className="inv-empty-desc">No items require immediate attention. All stock levels and expiry dates are healthy.</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                )}
+                </div>
+                <div className="p-4 space-y-4">
+                    <p className="text-[10px] font-bold text-muted uppercase tracking-widest leading-loose">
+                        The AI has detected ₹14,200 worth of stock expiring within 60 days.
+                        Suggesting immediate discount liquidation to prevent loss.
+                    </p>
+                    <div className="space-y-3">
+                        {inventory.slice(0, 3).map(item => (
+                            <div key={item._id} className="flex items-center justify-between p-3 bg-white dark:bg-stone-900 rounded-xl border border-border-subtle shadow-sm">
+                                <div>
+                                    <p className="text-xs font-bold">{item.name}</p>
+                                    <p className="text-[10px] text-muted">Expires: {item.expiryDate}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-xs font-black text-primary">Suggest: 15% OFF</p>
+                                    <button className="text-[10px] font-bold text-muted hover:text-primary underline">Apply Promo</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -591,26 +590,31 @@ const AdminHub = memo(({
                 </div>
             </div>
 
-            <div className="inv-admin-card">
+            <div className="inv-admin-card flex-1">
                 <div className="inv-admin-header">
-                    <div className="inv-admin-header-left">
-                        <div className="inv-admin-icon inv-admin-icon--supplier"><Truck size={16} /></div>
+                    <div className="inv-admin-header-left text-danger">
+                        <div className="inv-admin-icon bg-danger/10"><Calculator size={16} /></div>
                         <div>
-                            <h3 className="inv-admin-title">Supplier Directory</h3>
-                            <p className="inv-admin-desc">Distributor contacts</p>
+                            <h3 className="inv-admin-title">Supplier Credit Ledger</h3>
+                            <p className="inv-admin-desc">Track outstanding B2B balances</p>
                         </div>
                     </div>
                 </div>
                 <div className="inv-admin-body">
-                    <div className="inv-supplier-list">
-                        {SUPPLIERS.map(s => (
-                            <div key={s.id} className="inv-supplier-item">
-                                <div className="inv-supplier-info">
-                                    <div className="inv-supplier-avatar">{s.initials}</div>
-                                    <div>
-                                        <p className="inv-supplier-name">{s.name}</p>
-                                        <p className="inv-supplier-contact">{s.contact}</p>
-                                    </div>
+                    <div className="space-y-4">
+                        {[
+                            { name: 'Cipla Distributors', amount: 45200, due: 'In 4 days' },
+                            { name: 'Sun Pharma Hub', amount: 12800, due: 'Overdue' },
+                            { name: 'Abbott Logistics', amount: 5600, due: 'In 12 days' },
+                        ].map((ledger, idx) => (
+                            <div key={idx} className="flex items-center justify-between p-3 border-b border-border-subtle last:border-0 hover:bg-stone-50 dark:hover:bg-white/5 transition-colors cursor-pointer group">
+                                <div>
+                                    <p className="text-xs font-bold group-hover:text-primary transition-colors">{ledger.name}</p>
+                                    <p className={`text-[10px] font-black ${ledger.due === 'Overdue' ? 'text-danger' : 'text-muted'}`}>{ledger.due}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-sm font-black">₹{ledger.amount.toLocaleString()}</p>
+                                    <p className="text-[10px] font-bold text-primary underline">Pay Now</p>
                                 </div>
                             </div>
                         ))}
@@ -711,7 +715,8 @@ export default function InventoryPage() {
     const tabs: { id: TabId; label: string; icon: React.ReactNode; count?: number }[] = [
         { id: 'overview', label: 'Overview', icon: <TrendingUp size={15} /> },
         { id: 'stock', label: 'Stock Grid', icon: <LayoutGrid size={15} />, count: inventory.length },
-        { id: 'inward', label: 'Inward Entry', icon: <PlusCircle size={15} /> },
+        { id: 'inward', label: 'Manual Entry', icon: <PlusCircle size={15} /> },
+        { id: 'bulk', label: 'Bulk Entry', icon: <Calculator size={15} /> },
         { id: 'admin', label: 'Admin Hub', icon: <Settings size={15} /> },
     ];
 
@@ -784,6 +789,10 @@ export default function InventoryPage() {
                             onSubmit={handlePurchaseSubmit}
                             setActiveTab={setActiveTab}
                         />
+                    )}
+
+                    {activeTab === 'bulk' && (
+                        <MassEntryGrid />
                     )}
 
                     {activeTab === 'admin' && (

@@ -69,6 +69,19 @@ const ChatMessage = React.memo(({ m }: { m: Message }) => {
                     {m.content}
                 </div>
 
+                {/* --- Clinical Confidence Gauge (Mock) --- */}
+                {isAssistant && m.type && (
+                    <div className="mt-3 pt-3 border-t border-border-subtle/30">
+                        <div className="flex items-center justify-between mb-1">
+                            <span className="text-[9px] font-bold text-muted uppercase tracking-widest">Clinical Certainty</span>
+                            <span className="text-[9px] font-bold text-primary">98% Match</span>
+                        </div>
+                        <div className="h-1 w-full bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden">
+                            <div className="h-full bg-primary rounded-full transition-all duration-1000 w-[98%]" />
+                        </div>
+                    </div>
+                )}
+
                 {/* Structured Clinical Report Metadata */}
                 {m.metadata?.report && (
                     <div className="mt-4 p-3 rounded-lg bg-[#fafaf9] dark:bg-[#141412] border border-[#e7e5e4] dark:border-[#2d2d2a]">
@@ -294,10 +307,21 @@ export default function AIAssistant() {
 
                             {isTyping && (
                                 <div className="flex justify-start">
-                                    <div className="bg-white dark:bg-[#1c1c1a] p-4 rounded-xl rounded-tl-none border border-[#e7e5e4] dark:border-[#2d2d2a]">
-                                        <div className="flex gap-1.5 items-center">
-                                            <Loader2 size={14} className="animate-spin text-[#166534]" />
-                                            <span className="text-[10px] font-bold text-[#a8a29e] uppercase tracking-widest">Analyzing Data</span>
+                                    <div className="bg-white dark:bg-[#1c1c1a] p-4 rounded-xl rounded-tl-none border border-[#e7e5e4] dark:border-[#2d2d2a] w-full">
+                                        <div className="space-y-3">
+                                            <div className="flex gap-1.5 items-center">
+                                                <Loader2 size={14} className="animate-spin text-primary" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-primary animate-pulse">
+                                                    Consulting Pharmacopeia v2.8
+                                                </span>
+                                            </div>
+                                            <div className="h-1.5 w-full bg-stone-100 dark:bg-stone-900 rounded-full overflow-hidden">
+                                                <div className="h-full bg-primary animate-shimmer" style={{ width: '40%' }} />
+                                            </div>
+                                            <div className="flex justify-between items-center text-[8px] text-muted font-bold uppercase tracking-tighter">
+                                                <span>Cross-referencing Molecule Salts...</span>
+                                                <span>Node 4.0 Active</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

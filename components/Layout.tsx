@@ -29,9 +29,14 @@ import {
   ScanLine,
   Building2,
   UserCog,
+  ShieldCheck,
+  Calculator,
+  RefreshCcw,
+  Zap,
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import AIAssistant from './AIAssistant';
+import ConnectivityStatus from './ConnectivityStatus';
 import { usePersona } from '@/lib/context/PersonaContext';
 
 interface LayoutProps {
@@ -89,6 +94,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/revenue': 'Revenue & Billing',
   '/vendors': 'Vendor Portal',
   '/staff': 'Staff Management',
+  '/user/me': 'My Profile',
 };
 
 // --- SUB-COMPONENTS (MEMOIZED) ---
@@ -146,6 +152,9 @@ export default function Layout({ children, onLogout }: LayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isPrecision, setIsPrecision] = useState(false);
   const [showPersonaSwitcher, setShowPersonaSwitcher] = useState(false);
+  const [barcodeBuffer, setBarcodeBuffer] = useState('');
+  const [showShortcutCheatSheet, setShowShortcutCheatSheet] = useState(false);
+  const [showZReport, setShowZReport] = useState(false);
 
   // Use fallback values if user not yet loaded from context
   const user = personaUser || { name: 'User', shopName: 'Pharmacy' };
@@ -180,32 +189,52 @@ export default function Layout({ children, onLogout }: LayoutProps) {
     else document.documentElement.classList.remove('precision-view');
   }, [isPrecision]);
 
-  // --- SYSTEM HOTKEYS ---
+  // --- SYSTEM HOTKEYS & BARCODE PROXY ---
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     const target = e.target as HTMLElement;
-    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
+    const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
 
-    if (e.key === 'Escape') setIsSidebarOpen(false);
-
-    // Productivity: Alt+[1-4] for Core Tabs
-    if (e.altKey && ['1', '2', '3', '4'].includes(e.key)) {
-      e.preventDefault();
-      const item = NAV_ITEMS[parseInt(e.key) - 1];
-      if (item) router.push(item.href);
+    if (e.key === 'Escape') {
+      setIsSidebarOpen(false);
+      setShowShortcutCheatSheet(false);
     }
 
-    // Settings Toggle
-    if (e.altKey && e.key === 'p') {
+    // Command Center: Alt+[Key]
+    if (e.altKey) {
+      if (e.key === 's') { e.preventDefault(); router.push('/inventory'); }
+      if (e.key === 'n') { e.preventDefault(); router.push('/counter'); }
+      if (e.key === 'q') { e.preventDefault(); router.push('/queue'); }
+      if (e.key === 'p') { e.preventDefault(); togglePrecision(); }
+    }
+
+    // Help Helper
+    if (e.key === '?' && !isInput) {
       e.preventDefault();
-      togglePrecision();
+      setShowShortcutCheatSheet(prev => !prev);
     }
 
     // Global Search Focus
-    if (e.key === '/' && !e.ctrlKey && !e.altKey) {
+    if (e.key === '/' && !e.ctrlKey && !e.altKey && !isInput) {
       const searchInput = document.querySelector<HTMLInputElement>('[data-search-global]');
       if (searchInput) { e.preventDefault(); searchInput.focus(); }
     }
-  }, [router, togglePrecision]);
+
+    // --- BARCODE SCANNER PROXY ---
+    // Physical scanners often act as keyboards ending with 'Enter'
+    if (!isInput) {
+      if (e.key === 'Enter') {
+        if (barcodeBuffer.length > 5) {
+          console.log('Barcode Scanned:', barcodeBuffer);
+          // Potential logic: toast notification or redirect
+          setBarcodeBuffer('');
+        }
+      } else if (e.key.length === 1) {
+        setBarcodeBuffer(prev => prev + e.key);
+        // Clear buffer if no input for 500ms (to distinguish from manual typing)
+        setTimeout(() => setBarcodeBuffer(''), 500);
+      }
+    }
+  }, [router, togglePrecision, barcodeBuffer]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -234,6 +263,41 @@ export default function Layout({ children, onLogout }: LayoutProps) {
       {/* Mobile Interaction Backdrop */}
       {isSidebarOpen && (
         <div className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-md animate-fade-in" onClick={() => setIsSidebarOpen(false)} />
+      )}
+
+      {/* Shortcut Cheat Sheet */}
+      {showShortcutCheatSheet && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm" onClick={() => setShowShortcutCheatSheet(false)}>
+          <div className="bg-surface border border-border-subtle rounded-2xl shadow-2xl p-8 max-w-md w-full animate-scale-in" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
+              <span className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center text-sm">?</span>
+              Command Center Shortcuts
+            </h3>
+            <div className="space-y-4">
+              {[
+                { key: 'Alt + N', desc: 'New Transaction / Counter' },
+                { key: 'Alt + S', desc: 'Stock Inventory Search' },
+                { key: 'Alt + Q', desc: 'View Live Patient Queue' },
+                { key: 'Alt + P', desc: 'Toggle Precision/Aesthetic' },
+                { key: '/', desc: 'Focus Global Search' },
+                { key: 'Esc', desc: 'Close Modals / Sidebar' },
+              ].map(item => (
+                <div key={item.key} className="flex items-center justify-between py-2 border-b border-border-subtle last:border-0">
+                  <span className="text-sm text-stone-500 font-medium">{item.desc}</span>
+                  <kbd className="px-2 py-1 bg-stone-100 dark:bg-stone-800 rounded border border-stone-200 dark:border-stone-700 text-xs font-bold font-mono">
+                    {item.key}
+                  </kbd>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => setShowShortcutCheatSheet(false)}
+              className="mt-8 w-full py-3 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-xl font-bold text-sm transition-all"
+            >
+              Close Manual
+            </button>
+          </div>
+        </div>
       )}
 
       {/* ===== SIDEBAR (Clinical Dashboard Left Rail) ===== */}
@@ -339,6 +403,12 @@ export default function Layout({ children, onLogout }: LayoutProps) {
             )}
           </div>
 
+          <button onClick={() => setShowZReport(true)}
+            className={`w-full mt-2 flex items-center justify-center gap-2 text-white/40 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors duration-200 text-xs font-bold ${isCollapsed ? 'py-2.5' : 'py-2.5 px-3'}`}>
+            <Calculator size={14} />
+            {!isCollapsed && <span>Daily Closing</span>}
+          </button>
+
           <button onClick={onLogout}
             className={`w-full mt-1 flex items-center justify-center gap-2 text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-200 text-xs font-medium ${isCollapsed ? 'py-2.5' : 'py-2.5 px-3'}`}>
             <LogOut size={14} />
@@ -359,7 +429,9 @@ export default function Layout({ children, onLogout }: LayoutProps) {
             </h2>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <ConnectivityStatus />
+
             <button onClick={togglePrecision}
               className={`p-2 rounded-lg transition-colors duration-200 border flex items-center gap-2 ${isPrecision
                 ? 'bg-primary/5 text-primary border-primary/20'
@@ -383,6 +455,67 @@ export default function Layout({ children, onLogout }: LayoutProps) {
 
         {/* Global Intelligence Overlay */}
         <AIAssistant />
+
+        {/* ===== Z-REPORT / DAILY CLOSING MODAL ===== */}
+        {showZReport && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-fade-in" onClick={() => setShowZReport(false)}>
+            <div className="bg-surface border border-border-subtle rounded-3xl shadow-2xl p-8 max-w-lg w-full animate-scale-in" onClick={e => e.stopPropagation()}>
+              <div className="flex justify-between items-start mb-8">
+                <div>
+                  <h3 className="text-2xl font-black tracking-tight text-foreground italic flex items-center gap-2">
+                    <Zap className="text-primary fill-primary" size={24} /> Day Closing Report
+                  </h3>
+                  <p className="text-xs font-bold text-muted uppercase tracking-widest mt-1">Shift Reconciliation · {new Date().toLocaleDateString()}</p>
+                </div>
+                <button onClick={() => setShowZReport(false)} className="text-muted hover:text-foreground transition-colors p-2 bg-stone-100 dark:bg-stone-800 rounded-full">
+                  <RefreshCcw size={16} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="p-4 bg-stone-50 dark:bg-stone-900 rounded-2xl border border-border-subtle">
+                  <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Total Sales</p>
+                  <p className="text-xl font-black text-primary">₹1,42,560.00</p>
+                </div>
+                <div className="p-4 bg-stone-50 dark:bg-stone-900 rounded-2xl border border-border-subtle">
+                  <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Cash In Drawer</p>
+                  <p className="text-xl font-black text-foreground">₹24,800.00</p>
+                </div>
+                <div className="p-4 bg-stone-50 dark:bg-stone-900 rounded-2xl border border-border-subtle col-span-2">
+                  <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">GST Collected (Central + State)</p>
+                  <p className="text-xl font-black text-emerald-600">₹17,107.20</p>
+                </div>
+              </div>
+
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center justify-between text-xs font-medium py-2 border-b border-border-subtle">
+                  <span className="text-muted">UPI Transactions (42)</span>
+                  <span>₹98,400.00</span>
+                </div>
+                <div className="flex items-center justify-between text-xs font-medium py-2 border-b border-border-subtle">
+                  <span className="text-muted">Credit / B2B Outs</span>
+                  <span>₹19,360.00</span>
+                </div>
+              </div>
+
+              <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/30 rounded-2xl flex gap-3 mb-8">
+                <ShieldCheck className="text-yellow-600 flex-shrink-0" size={20} />
+                <p className="text-xs font-medium text-yellow-800 dark:text-yellow-400">
+                  Daily stock audit shows 2 discrepancies in Antibiotics section. Please verify Batch #S992 before closing.
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button onClick={() => setShowZReport(false)} className="flex-1 py-4 bg-stone-100 dark:bg-stone-800 rounded-2xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition-all">
+                  Save Draft
+                </button>
+                <button onClick={() => { alert('End of Day Report (Z-Report) generated and sent to Cloud.'); setShowZReport(false); }} className="flex-[2] py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/30 hover:bg-primary-light transition-all flex items-center justify-center gap-2">
+                  Generate Z-Report & Logout <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

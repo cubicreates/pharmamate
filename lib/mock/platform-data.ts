@@ -576,7 +576,8 @@ export interface UniversityInventoryItem {
     vendorId: string;
     shelf: string;
     batchNo: string;
-    schedule: 'OTC' | 'H' | 'H1' | 'X';
+    schedule: 'OTC' | 'H' | 'H1' | 'X' | 'General';
+    hsnCode: string;
     /** Number of times sold this month */
     monthlySales: number;
 }
@@ -587,105 +588,105 @@ export const universityInventory: UniversityInventoryItem[] = [
         category: 'Antibiotics', salt: 'Amoxicillin Trihydrate',
         stock: 250, reorderLevel: 50, price: 7.14, mrp: 8.50, gstRate: 12,
         expiryDate: '2027-06-15', manufacturer: 'Cipla', vendorId: 'vnd_001',
-        shelf: 'A-2', batchNo: 'BN-AMX-2026-06', schedule: 'H', monthlySales: 120,
+        shelf: 'A-2', batchNo: 'BN-AMX-2026-06', schedule: 'H', hsnCode: '3004', monthlySales: 120,
     },
     {
         _id: 'uinv_002', name: 'Paracetamol 650mg', barcode: '8901234567002',
         category: 'Pain Relief', salt: 'Paracetamol',
         stock: 500, reorderLevel: 100, price: 5.00, mrp: 6.00, gstRate: 12,
         expiryDate: '2027-12-01', manufacturer: 'GSK', vendorId: 'vnd_003',
-        shelf: 'B-1', batchNo: 'BN-PCM-2026-12', schedule: 'OTC', monthlySales: 340,
+        shelf: 'B-1', batchNo: 'BN-PCM-2026-12', schedule: 'OTC', hsnCode: '3004', monthlySales: 340,
     },
     {
         _id: 'uinv_003', name: 'Metformin 500mg', barcode: '8901234567003',
         category: 'Diabetes', salt: 'Metformin Hydrochloride',
         stock: 180, reorderLevel: 60, price: 2.00, mrp: 3.50, gstRate: 5,
         expiryDate: '2027-08-20', manufacturer: 'Sun Pharma', vendorId: 'vnd_002',
-        shelf: 'C-3', batchNo: 'BN-MET-2026-08', schedule: 'H', monthlySales: 95,
+        shelf: 'C-3', batchNo: 'BN-MET-2026-08', schedule: 'H', hsnCode: '3004', monthlySales: 95,
     },
     {
         _id: 'uinv_004', name: 'Atorvastatin 10mg', barcode: '8901234567004',
         category: 'Cardiology', salt: 'Atorvastatin Calcium',
         stock: 12, reorderLevel: 40, price: 6.67, mrp: 8.00, gstRate: 12,
         expiryDate: '2027-04-10', manufacturer: 'Lupin Limited', vendorId: 'vnd_004',
-        shelf: 'C-1', batchNo: 'BN-ATR-2026-04', schedule: 'H', monthlySales: 45,
+        shelf: 'C-1', batchNo: 'BN-ATR-2026-04', schedule: 'H', hsnCode: '3004', monthlySales: 45,
     },
     {
         _id: 'uinv_005', name: 'Ibuprofen 400mg', barcode: '8901234567005',
         category: 'Pain Relief', salt: 'Ibuprofen',
         stock: 120, reorderLevel: 30, price: 4.50, mrp: 5.50, gstRate: 12,
         expiryDate: '2027-09-12', manufacturer: 'Abbott', vendorId: 'vnd_005',
-        shelf: 'B-2', batchNo: 'BN-IBU-2026-09', schedule: 'OTC', monthlySales: 180,
+        shelf: 'B-2', batchNo: 'BN-IBU-2026-09', schedule: 'OTC', hsnCode: '3004', monthlySales: 180,
     },
     {
         _id: 'uinv_006', name: 'Cetirizine 10mg', barcode: '8901234567006',
         category: 'Antihistamine', salt: 'Cetirizine Hydrochloride',
         stock: 300, reorderLevel: 80, price: 2.50, mrp: 4.00, gstRate: 12,
         expiryDate: '2027-11-30', manufacturer: 'Cipla', vendorId: 'vnd_001',
-        shelf: 'A-3', batchNo: 'BN-CET-2026-11', schedule: 'OTC', monthlySales: 275,
+        shelf: 'A-3', batchNo: 'BN-CET-2026-11', schedule: 'OTC', hsnCode: '3004', monthlySales: 275,
     },
     {
         _id: 'uinv_007', name: 'Montelukast 10mg', barcode: '8901234567007',
         category: 'Respiratory', salt: 'Montelukast Sodium',
         stock: 90, reorderLevel: 25, price: 8.00, mrp: 10.00, gstRate: 12,
         expiryDate: '2027-07-20', manufacturer: 'Sun Pharma', vendorId: 'vnd_002',
-        shelf: 'A-4', batchNo: 'BN-MNK-2026-07', schedule: 'H', monthlySales: 55,
+        shelf: 'A-4', batchNo: 'BN-MNK-2026-07', schedule: 'H', hsnCode: '3004', monthlySales: 55,
     },
     {
         _id: 'uinv_008', name: 'Ferrous Sulphate 200mg', barcode: '8901234567008',
         category: 'Supplements', salt: 'Ferrous Sulphate',
         stock: 200, reorderLevel: 50, price: 3.00, mrp: 4.50, gstRate: 5,
         expiryDate: '2027-10-15', manufacturer: 'GSK', vendorId: 'vnd_003',
-        shelf: 'D-1', batchNo: 'BN-FES-2026-10', schedule: 'OTC', monthlySales: 150,
+        shelf: 'D-1', batchNo: 'BN-FES-2026-10', schedule: 'OTC', hsnCode: '3004', monthlySales: 150,
     },
     {
         _id: 'uinv_009', name: 'Salbutamol Inhaler 100mcg', barcode: '8901234567009',
         category: 'Respiratory', salt: 'Salbutamol Sulphate',
         stock: 35, reorderLevel: 15, price: 95.00, mrp: 120.00, gstRate: 12,
         expiryDate: '2027-05-01', manufacturer: 'Cipla', vendorId: 'vnd_001',
-        shelf: 'E-1', batchNo: 'BN-SAL-2026-05', schedule: 'H', monthlySales: 22,
+        shelf: 'E-1', batchNo: 'BN-SAL-2026-05', schedule: 'H', hsnCode: '3004', monthlySales: 22,
     },
     {
         _id: 'uinv_010', name: 'Fluticasone Nasal Spray', barcode: '8901234567010',
         category: 'Respiratory', salt: 'Fluticasone Propionate',
         stock: 8, reorderLevel: 10, price: 145.00, mrp: 180.00, gstRate: 12,
         expiryDate: '2026-08-30', manufacturer: 'GSK', vendorId: 'vnd_003',
-        shelf: 'E-2', batchNo: 'BN-FLU-2026-08', schedule: 'H', monthlySales: 12,
+        shelf: 'E-2', batchNo: 'BN-FLU-2026-08', schedule: 'H', hsnCode: '3004', monthlySales: 12,
     },
     {
         _id: 'uinv_011', name: 'Glimepiride 1mg', barcode: '8901234567011',
         category: 'Diabetes', salt: 'Glimepiride',
         stock: 60, reorderLevel: 20, price: 4.20, mrp: 5.80, gstRate: 5,
         expiryDate: '2027-09-01', manufacturer: 'Sun Pharma', vendorId: 'vnd_002',
-        shelf: 'C-4', batchNo: 'BN-GLM-2026-09', schedule: 'H', monthlySales: 38,
+        shelf: 'C-4', batchNo: 'BN-GLM-2026-09', schedule: 'H', hsnCode: '3004', monthlySales: 38,
     },
     {
         _id: 'uinv_012', name: 'Vitamin C 500mg', barcode: '8901234567012',
         category: 'Supplements', salt: 'Ascorbic Acid',
         stock: 400, reorderLevel: 100, price: 2.00, mrp: 3.00, gstRate: 5,
         expiryDate: '2028-01-15', manufacturer: 'Abbott', vendorId: 'vnd_005',
-        shelf: 'D-2', batchNo: 'BN-VTC-2028-01', schedule: 'OTC', monthlySales: 220,
+        shelf: 'D-2', batchNo: 'BN-VTC-2028-01', schedule: 'OTC', hsnCode: '3004', monthlySales: 220,
     },
     {
         _id: 'uinv_013', name: 'Aspirin 75mg', barcode: '8901234567013',
         category: 'Cardiology', salt: 'Acetylsalicylic Acid',
         stock: 3, reorderLevel: 30, price: 2.67, mrp: 3.50, gstRate: 12,
         expiryDate: '2026-04-01', manufacturer: 'Abbott', vendorId: 'vnd_005',
-        shelf: 'C-2', batchNo: 'BN-ASP-2026-04', schedule: 'OTC', monthlySales: 65,
+        shelf: 'C-2', batchNo: 'BN-ASP-2026-04', schedule: 'OTC', hsnCode: '3004', monthlySales: 65,
     },
     {
         _id: 'uinv_014', name: 'ORS Sachets (Electral)', barcode: '8901234567014',
         category: 'GI', salt: 'Oral Rehydration Salts',
         stock: 350, reorderLevel: 80, price: 18.00, mrp: 22.00, gstRate: 5,
         expiryDate: '2027-12-30', manufacturer: 'Abbott', vendorId: 'vnd_005',
-        shelf: 'B-3', batchNo: 'BN-ORS-2027-12', schedule: 'OTC', monthlySales: 310,
+        shelf: 'B-3', batchNo: 'BN-ORS-2027-12', schedule: 'OTC', hsnCode: '3004', monthlySales: 310,
     },
     {
         _id: 'uinv_015', name: 'Azithromycin 250mg', barcode: '8901234567015',
         category: 'Antibiotics', salt: 'Azithromycin Dihydrate',
         stock: 75, reorderLevel: 20, price: 12.00, mrp: 15.00, gstRate: 12,
         expiryDate: '2027-06-30', manufacturer: 'Cipla', vendorId: 'vnd_001',
-        shelf: 'A-5', batchNo: 'BN-AZM-2027-06', schedule: 'H1', monthlySales: 42,
+        shelf: 'A-5', batchNo: 'BN-AZM-2027-06', schedule: 'H1', hsnCode: '3004', monthlySales: 42,
     },
 ];
 
