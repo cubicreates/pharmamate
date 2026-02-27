@@ -13,8 +13,27 @@ import {
     FileText,
     ShoppingBag,
     Activity,
-    Search
+    Search,
+    ArrowLeft
 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import MobileModeSwitcher from '@/components/MobileModeSwitcher';
+import { MOBILE_CATEGORIES } from '@/lib/constants/navigation';
+
+const container = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.05
+        }
+    }
+};
+
+const itemAnim = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+};
 
 interface OrderItem {
     name: string; dosage: string; quantity: number; price: number; salt?: string;
@@ -91,6 +110,7 @@ export default function OrdersPage() {
     return (
         <Layout onLogout={handleLogout}>
             <div className="orders-animate-in">
+                <MobileModeSwitcher options={MOBILE_CATEGORIES.FLOW} />
 
                 {/* ===== Hero Banner ===== */}
                 <div className="orders-hero">
@@ -318,54 +338,94 @@ export default function OrdersPage() {
 
                         {/* Mobile Card View */}
                         <div className="orders-mobile-cards">
-                            <div className="orders-card-list">
-                                {filtered.map((order, i) => (
-                                    <div key={order._id} className="orders-card orders-animate-in" style={{ animationDelay: `${i * 40}ms` }}>
-                                        <div className="orders-card-top">
-                                            <div>
-                                                <p className="orders-patient-name">{order.patientName}</p>
-                                                <p className="orders-patient-prn">{order.patientPrn}</p>
+                            <motion.div
+                                variants={container}
+                                initial="hidden"
+                                animate="show"
+                                className="orders-card-list space-y-6 pb-32"
+                            >
+                                {filtered.map((order) => (
+                                    <motion.div variants={itemAnim} key={order._id}>
+                                        <div className="relative overflow-hidden rounded-[2rem] bg-stone-100 dark:bg-stone-900 border border-border-subtle shadow-inner group">
+                                            {/* Swipe Action Background */}
+                                            <div className={`absolute inset-y-0 right-0 w-24 flex flex-col items-center justify-center transition-colors ${order.status === 'Pending' ? 'text-primary' :
+                                                order.status === 'Ready' ? 'text-amber-500' :
+                                                    'text-stone-500'
+                                                }`}>
+                                                {order.status === 'Pending' && <CheckCircle2 size={24} className="mb-1" />}
+                                                {order.status === 'Ready' && <Package size={24} className="mb-1" />}
+                                                {order.status === 'Completed' && <FileText size={24} className="mb-1" />}
+                                                <span className="text-[9px] font-black uppercase tracking-widest">
+                                                    {order.status === 'Pending' ? 'Process' :
+                                                        order.status === 'Ready' ? 'Fulfill' :
+                                                            'Invoice'}
+                                                </span>
                                             </div>
-                                            <span className={`orders-status ${statusClass(order.status)}`}>
-                                                <span className="orders-status-dot" />
-                                                {order.status}
-                                            </span>
-                                        </div>
-                                        <div className="orders-card-body">
-                                            <div className="orders-card-items">
-                                                {order.items.map((item, j) => (
-                                                    <div key={j} className="orders-card-item-row">
-                                                        <span className="orders-card-item-name">{item.name}</span>
-                                                        <span className="orders-card-item-qty">×{item.quantity}</span>
+
+                                            {/* Draggable Foreground Card */}
+                                            <motion.div
+                                                drag="x"
+                                                dragConstraints={{ left: -90, right: 0 }}
+                                                dragElastic={0.2}
+                                                onDragEnd={(e, info) => {
+                                                    if (info.offset.x < -50) {
+                                                        if (order.status === 'Pending') handleMarkReady(order);
+                                                        else if (order.status === 'Ready') router.push(`/orders/${order._id}/fulfillment`);
+                                                        else if (order.status === 'Completed') router.push(`/orders/${order._id}/invoice`);
+                                                    }
+                                                }}
+                                                whileTap={{ scale: 0.98 }}
+                                                className="bg-surface border border-border-subtle rounded-[2rem] shadow-lg flex flex-col relative z-10 w-full"
+                                            >
+                                                <div className="p-4 sm:p-6">
+                                                    <div className="flex justify-between items-start mb-4">
+                                                        <div className="flex-1 min-w-0 pr-2">
+                                                            <p className="text-base sm:text-lg font-black tracking-tight text-foreground leading-none truncate">{order.patientName}</p>
+                                                            <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-1.5">
+                                                                <span className="text-[9px] sm:text-[10px] font-bold text-stone-400 uppercase tracking-widest">{order.patientPrn}</span>
+                                                                <div className="w-1 h-1 rounded-full bg-stone-200 hidden sm:block" />
+                                                                <span className="text-[9px] sm:text-[10px] font-bold text-stone-400 uppercase tracking-widest">{formatDate(order.orderDate)}</span>
+                                                            </div>
+                                                        </div>
+                                                        <span className={`px-2 sm:px-3 py-1 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-tighter flex items-center gap-1.5 shrink-0 ${order.status === 'Completed' ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/20' :
+                                                            order.status === 'Ready' ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/20' :
+                                                                'bg-blue-500 text-white shadow-sm shadow-blue-500/20'
+                                                            }`}>
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                                                            {order.status}
+                                                        </span>
                                                     </div>
-                                                ))}
-                                            </div>
-                                            {order.doctorName && <p className="orders-card-meta">Rx by: Dr. {order.doctorName}</p>}
-                                            {order.batchNumber && <p className="orders-card-meta">Batch: #{order.batchNumber}</p>}
+
+                                                    <div className="space-y-2 mb-6">
+                                                        {order.items.map((item, j) => (
+                                                            <div key={j} className="flex items-center justify-between py-2 border-b border-border-subtle/50 last:border-0">
+                                                                <div className="flex items-center gap-3 min-w-0 pr-2">
+                                                                    <div className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 rounded-lg bg-stone-50 dark:bg-stone-900 border border-border-subtle flex items-center justify-center text-stone-400 text-xs font-bold">
+                                                                        {item.quantity}
+                                                                    </div>
+                                                                    <span className="text-xs sm:text-sm font-bold text-foreground/80 truncate">{item.name}</span>
+                                                                </div>
+                                                                <span className="text-[10px] sm:text-xs font-black text-stone-400 uppercase shrink-0">₹{item.price}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    <div className="flex items-center justify-between pt-2">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-[8px] sm:text-[9px] font-black text-stone-300 uppercase tracking-widest">Total Amount</span>
+                                                            <span className="text-xl sm:text-2xl font-black text-primary tracking-tighter">₹{order.total.toLocaleString()}</span>
+                                                        </div>
+
+                                                        <div className="flex items-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] font-black text-stone-300 uppercase tracking-widest">
+                                                            <ArrowLeft size={10} className="opacity-50 sm:w-3 sm:h-3" /> Swipe to action
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
                                         </div>
-                                        <div className="orders-card-footer">
-                                            <span className="orders-card-amount">₹{order.total}</span>
-                                            <div>
-                                                {order.status === 'Pending' && (
-                                                    <button onClick={() => handleMarkReady(order)} className="orders-action-btn orders-action-btn--ready">
-                                                        Mark Ready
-                                                    </button>
-                                                )}
-                                                {order.status === 'Ready' && (
-                                                    <button onClick={() => router.push(`/orders/${order._id}/fulfillment`)} className="orders-action-btn orders-action-btn--fulfill">
-                                                        <CheckCircle2 size={13} /> Fulfill
-                                                    </button>
-                                                )}
-                                                {order.status === 'Completed' && (
-                                                    <button onClick={() => router.push(`/orders/${order._id}/invoice`)} className="orders-action-btn orders-action-btn--invoice">
-                                                        <FileText size={13} /> Invoice
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
+                                    </motion.div>
                                 ))}
-                            </div>
+                            </motion.div>
                         </div>
                     </>
                 )}

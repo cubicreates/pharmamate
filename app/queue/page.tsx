@@ -15,6 +15,8 @@ import {
     CheckCircle2,
     Search
 } from 'lucide-react';
+import MobileModeSwitcher from '@/components/MobileModeSwitcher';
+import { MOBILE_CATEGORIES } from '@/lib/constants/navigation';
 
 interface QueueItem {
     _id: string;
@@ -100,7 +102,8 @@ export default function QueuePage() {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="queue-workspace">
+            <div className="queue-workspace space-y-8 pb-12">
+                <MobileModeSwitcher options={MOBILE_CATEGORIES.FLOW} />
 
                 {/* ── Hero Banner ── */}
                 <div className="queue-hero">

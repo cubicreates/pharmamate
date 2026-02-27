@@ -152,7 +152,7 @@ export default function RevenuePage() {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="rv-workspace animate-fade-in">
+            <div className="rv-workspace space-y-8 pb-12 animate-fade-in">
                 {/* ── Hero Banner ── */}
                 <div className="rv-hero">
                     <div className="rv-hero-content">

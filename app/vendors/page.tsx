@@ -16,6 +16,8 @@ import {
     Phone,
     Mail,
 } from 'lucide-react';
+import MobileModeSwitcher from '@/components/MobileModeSwitcher';
+import { MOBILE_CATEGORIES } from '@/lib/constants/navigation';
 import { apiRequest } from '@/lib/utils/api';
 import type { Vendor, PurchaseOrder } from '@/lib/mock/platform-data';
 
@@ -81,60 +83,61 @@ export default function VendorPortalPage() {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="space-y-6 pb-8 animate-fade-in">
+            <div className="space-y-8 pb-12 animate-fade-in">
+                <MobileModeSwitcher options={MOBILE_CATEGORIES.STOCK} />
                 {/* Hero */}
-                <div className="relative rounded-xl overflow-hidden" style={{ minHeight: '180px' }}>
+                <div className="relative rounded-2xl overflow-hidden shadow-lg" style={{ minHeight: '180px' }}>
                     <img
                         src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&q=80"
                         alt="Supply chain"
-                        className="w-full h-48 object-cover"
+                        className="w-full h-56 object-cover"
                         loading="eager"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-stone-950/90 via-stone-950/70 to-transparent flex items-center px-8">
+                    <div className="absolute inset-0 bg-gradient-to-r from-stone-950/90 via-stone-950/70 to-transparent flex items-center px-10">
                         <div>
-                            <div className="flex items-center gap-2 mb-2">
+                            <div className="flex items-center gap-2 mb-3">
                                 <Truck size={18} className="text-blue-400" />
                                 <span className="text-xs font-semibold text-blue-300 uppercase tracking-widest">B2B Supply Chain</span>
                             </div>
-                            <h1 className="text-2xl font-bold text-white tracking-tight">Vendor Portal</h1>
-                            <p className="text-sm text-stone-300/60 mt-1 max-w-md">
-                                Manage distributor relations, track purchase orders, and monitor supply reliability.
+                            <h1 className="text-2xl font-bold text-white tracking-tight leading-tight">Vendor Analytics & Order Portal</h1>
+                            <p className="text-sm text-stone-300/60 mt-2 max-w-md leading-relaxed">
+                                Manage pharmaceutical suppliers, track outward orders, and monitor reliability metrics.
                             </p>
                         </div>
                     </div>
                 </div>
 
                 {/* Summary */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-surface border border-border-subtle rounded-xl p-5">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="bg-surface border border-border-subtle rounded-2xl p-6 shadow-sm flex flex-col justify-between min-h-[110px]">
                         <div className="flex items-center gap-2 mb-2">
-                            <Building2 size={15} className="text-stone-400" />
-                            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Vendors</span>
+                            <Building2 size={16} className="text-stone-400" />
+                            <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Vendors</span>
                         </div>
-                        <p className="text-2xl font-semibold text-foreground">{vendorList.length}</p>
+                        <p className="text-3xl font-bold text-foreground leading-none">{vendorList.length}</p>
                     </div>
-                    <div className="bg-surface border border-border-subtle rounded-xl p-5">
+                    <div className="bg-surface border border-border-subtle rounded-2xl p-6 shadow-sm flex flex-col justify-between min-h-[110px]">
                         <div className="flex items-center gap-2 mb-2">
-                            <Package size={15} className="text-stone-400" />
-                            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Active Orders</span>
+                            <Package size={16} className="text-stone-400" />
+                            <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Active Orders</span>
                         </div>
-                        <p className="text-2xl font-semibold text-foreground">
+                        <p className="text-3xl font-bold text-foreground leading-none">
                             {orderList.filter(o => o.status !== 'Delivered').length}
                         </p>
                     </div>
-                    <div className="bg-surface border border-border-subtle rounded-xl p-5">
+                    <div className="bg-surface border border-border-subtle rounded-2xl p-6 shadow-sm flex flex-col justify-between min-h-[110px]">
                         <div className="flex items-center gap-2 mb-2">
-                            <IndianRupee size={15} className="text-stone-400" />
-                            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Outstanding</span>
+                            <IndianRupee size={16} className="text-stone-400" />
+                            <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Outstanding</span>
                         </div>
-                        <p className="text-2xl font-semibold text-foreground">₹{totalOutstanding.toLocaleString()}</p>
+                        <p className="text-3xl font-bold text-foreground leading-none truncate">₹{totalOutstanding.toLocaleString()}</p>
                     </div>
-                    <div className="bg-surface border border-border-subtle rounded-xl p-5">
+                    <div className="bg-surface border border-border-subtle rounded-2xl p-6 shadow-sm flex flex-col justify-between min-h-[110px]">
                         <div className="flex items-center gap-2 mb-2">
-                            <Star size={15} className="text-stone-400" />
-                            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Avg Delivery</span>
+                            <Star size={16} className="text-stone-400" />
+                            <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Avg Delivery</span>
                         </div>
-                        <p className="text-2xl font-semibold text-foreground">
+                        <p className="text-3xl font-bold text-foreground leading-none">
                             {vendorList.length > 0 ? Math.round(vendorList.reduce((s, v) => s + v.avgDeliveryDays, 0) / vendorList.length) : 0}d
                         </p>
                     </div>

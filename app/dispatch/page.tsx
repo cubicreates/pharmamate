@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { useRouter } from 'next/navigation';
 import { Plus, Search } from 'lucide-react';
+import MobileModeSwitcher from '@/components/MobileModeSwitcher';
+import { MOBILE_CATEGORIES } from '@/lib/constants/navigation';
 
 interface Delivery {
     _id: string; patientName: string; orderId: string;
@@ -38,6 +40,7 @@ export default function DispatchTrackingPage() {
     return (
         <Layout onLogout={handleLogout}>
             <div className="orders-animate-in">
+                <MobileModeSwitcher options={MOBILE_CATEGORIES.FLOW} />
 
                 {/* Header */}
                 <div className="dispatch-header">

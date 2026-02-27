@@ -5,6 +5,8 @@ import Layout from '@/components/Layout';
 import { useRouter } from 'next/navigation';
 import { apiRequest } from '@/lib/utils/api';
 import { Search, ArrowRight, MapPin, AlertTriangle, Package } from 'lucide-react';
+import MobileModeSwitcher from '@/components/MobileModeSwitcher';
+import { MOBILE_CATEGORIES } from '@/lib/constants/navigation';
 
 interface SubstituteItem {
     _id: string;
@@ -72,6 +74,7 @@ export default function SubstitutesFinderPage() {
     return (
         <Layout onLogout={handleLogout}>
             <div className="sub-workspace">
+                <MobileModeSwitcher options={MOBILE_CATEGORIES.SALES} />
 
                 {/* ── Hero Banner ── */}
                 <div className="sub-hero">

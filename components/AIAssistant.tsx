@@ -9,7 +9,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
     X, Send, Sparkles, MessageSquare, ShieldAlert,
-    BookOpen, ArrowLeft, Loader2, Bot, Info,
+    BookOpen, ArrowLeft, Loader2, Info,
     ChevronRight, Zap, Target, Activity,
     LucideIcon
 } from 'lucide-react';
@@ -217,22 +217,25 @@ export default function AIAssistant() {
         }, 1200);
     }, [input, isTyping, knowledge, activeModule]);
 
+    useEffect(() => {
+        const handleToggle = () => toggleChat();
+        window.addEventListener('toggleAIAssistant', handleToggle);
+        return () => window.removeEventListener('toggleAIAssistant', handleToggle);
+    }, [toggleChat]);
+
     return (
         <div className="select-none">
-            {/* --- MINIMALIST FLOATING TRIGGER --- */}
-            <div
-                onClick={toggleChat}
-                className={`fixed bottom-6 right-6 w-14 h-14 rounded-2xl bg-[#166534] text-white shadow-xl flex items-center justify-center z-[100] cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 group ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
-            >
-                <Bot size={26} className="group-hover:rotate-6 transition-transform" />
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#0f766e] rounded-full flex items-center justify-center border-2 border-white animate-pulse">
-                    <Zap size={8} />
-                </div>
-            </div>
+            {/* Backdrop for mobile */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[140] md:hidden animate-fade-in"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
 
-            {/* --- CLINICAL CONSOLE INTERFACE --- */}
+            {/* --- CLINICAL CONSOLE INTERFACE DRAG-OUT PANEL --- */}
             <div
-                className={`fixed bottom-6 right-6 w-[420px] h-[640px] bg-[#fafaf9] dark:bg-[#141412] rounded-3xl shadow-2xl border border-[#e7e5e4] dark:border-[#2d2d2a] flex flex-col z-[101] overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16, 1, 0.3, 1)] ${isOpen ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-8 opacity-0 pointer-events-none'
+                className={`fixed top-0 right-0 w-full md:w-[420px] h-screen bg-[#fafaf9] dark:bg-[#141412] shadow-[0_0_50px_rgba(0,0,0,0.1)] dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] border-l border-[#e7e5e4] dark:border-[#2d2d2a] flex flex-col z-[150] transition-transform duration-500 ease-[cubic-bezier(0.16, 1, 0.3, 1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'
                     }`}
             >
                 {/* Enterprise Header */}

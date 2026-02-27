@@ -48,7 +48,7 @@ export default function DevToolbar() {
     return (
         <div style={{
             position: 'fixed',
-            bottom: 20,
+            bottom: 110,
             right: 20,
             zIndex: 9999,
             fontFamily: "'Inter', system-ui, sans-serif",

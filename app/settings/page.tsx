@@ -7,6 +7,8 @@ import {
     Settings, Shield, Bell, Eye, Palette, Globe, Monitor,
     Moon, Sun, Lock, Trash2, LogOut, ChevronRight
 } from 'lucide-react';
+import MobileModeSwitcher from '@/components/MobileModeSwitcher';
+import { MOBILE_CATEGORIES } from '@/lib/constants/navigation';
 
 interface ToggleProps {
     active: boolean;
@@ -69,7 +71,8 @@ export default function SettingsPage() {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="st-workspace animate-fade-in">
+            <div className="st-workspace space-y-8 pb-12 animate-fade-in">
+                <MobileModeSwitcher options={MOBILE_CATEGORIES.HOME} />
                 {/* ── Hero Banner ── */}
                 <div className="st-hero">
                     <div className="st-hero-content">

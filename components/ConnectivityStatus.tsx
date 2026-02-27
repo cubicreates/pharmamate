@@ -51,7 +51,7 @@ export default function ConnectivityStatus() {
     const Icon = config.icon;
 
     return (
-        <div className={`flex items-center gap-2.5 px-3 py-1.5 rounded-full border transition-all duration-500 ${config.color}`}>
+        <div className={`flex items-center gap-2 px-2 min-[360px]:px-3 py-1.5 min-[360px]:gap-2.5 rounded-full border transition-all duration-500 ${config.color}`}>
             <div className="relative flex items-center justify-center">
                 <Icon size={14} className={mode === 'syncing' ? 'animate-spin' : ''} />
                 {config.pulse && (
@@ -59,7 +59,7 @@ export default function ConnectivityStatus() {
                 )}
             </div>
 
-            <div className="flex flex-col -space-y-0.5">
+            <div className="hidden min-[360px]:flex flex-col -space-y-0.5">
                 <span className="text-[10px] font-black uppercase tracking-widest leading-none">
                     {config.label}
                 </span>

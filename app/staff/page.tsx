@@ -12,6 +12,8 @@ import {
     UserCheck,
     UserX,
 } from 'lucide-react';
+import MobileModeSwitcher from '@/components/MobileModeSwitcher';
+import { MOBILE_CATEGORIES } from '@/lib/constants/navigation';
 import { apiRequest } from '@/lib/utils/api';
 import type { StaffMember } from '@/lib/mock/platform-data';
 
@@ -82,23 +84,24 @@ export default function StaffPage() {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="space-y-6 pb-8 animate-fade-in">
+            <div className="space-y-8 pb-12 animate-fade-in">
+                <MobileModeSwitcher options={MOBILE_CATEGORIES.ADMIN} />
                 {/* Header */}
-                <div className="relative rounded-xl overflow-hidden" style={{ minHeight: '180px' }}>
+                <div className="relative rounded-2xl overflow-hidden shadow-lg" style={{ minHeight: '180px' }}>
                     <img
                         src="https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=1200&q=80"
                         alt="Pharmacy team"
-                        className="w-full h-48 object-cover"
+                        className="w-full h-56 object-cover"
                         loading="eager"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-stone-950/90 via-stone-950/70 to-transparent flex items-center px-8">
+                    <div className="absolute inset-0 bg-gradient-to-r from-stone-950/90 via-stone-950/70 to-transparent flex items-center px-10">
                         <div>
-                            <div className="flex items-center gap-2 mb-2">
+                            <div className="flex items-center gap-2 mb-3">
                                 <Users size={18} className="text-emerald-400" />
                                 <span className="text-xs font-semibold text-emerald-300 uppercase tracking-widest">Admin Hub</span>
                             </div>
-                            <h1 className="text-2xl font-bold text-white tracking-tight">Staff & Shift Management</h1>
-                            <p className="text-sm text-stone-300/60 mt-1 max-w-md">
+                            <h1 className="text-2xl font-bold text-white tracking-tight leading-tight">Staff & Shift Management</h1>
+                            <p className="text-sm text-stone-300/60 mt-2 max-w-md leading-relaxed">
                                 Monitor active shifts, till assignments, and team performance.
                             </p>
                         </div>

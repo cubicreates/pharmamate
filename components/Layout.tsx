@@ -22,7 +22,6 @@ import {
   Maximize2,
   ChevronLeft,
   ChevronRight,
-  Menu,
   Settings,
   TrendingUp,
   LucideIcon,
@@ -33,11 +32,13 @@ import {
   Calculator,
   RefreshCcw,
   Zap,
+  Bot
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import AIAssistant from './AIAssistant';
 import ConnectivityStatus from './ConnectivityStatus';
 import { usePersona } from '@/lib/context/PersonaContext';
+import BottomNav from './BottomNav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -169,6 +170,11 @@ export default function Layout({ children, onLogout }: LayoutProps) {
     const savedPrecision = localStorage.getItem('precisionView') === 'true';
     setIsPrecision(savedPrecision);
     if (savedPrecision) document.documentElement.classList.add('precision-view');
+
+    // Tablet Mode: Default to collapsed if width is between 768px and 1024px
+    if (window.innerWidth >= 768 && window.innerWidth < 1024) {
+      setIsCollapsed(true);
+    }
   }, []);
 
   const switchRole = useCallback((role: UserRole) => {
@@ -248,7 +254,7 @@ export default function Layout({ children, onLogout }: LayoutProps) {
   };
 
   const toggleSidebar = useCallback(() => {
-    if (window.innerWidth >= 1024) setIsCollapsed(prev => !prev);
+    if (window.innerWidth >= 768) setIsCollapsed(prev => !prev);
     else setIsSidebarOpen(prev => !prev);
   }, []);
 
@@ -262,7 +268,7 @@ export default function Layout({ children, onLogout }: LayoutProps) {
 
       {/* Mobile Interaction Backdrop */}
       {isSidebarOpen && (
-        <div className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-md animate-fade-in" onClick={() => setIsSidebarOpen(false)} />
+        <div className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-md animate-fade-in" onClick={() => setIsSidebarOpen(false)} />
       )}
 
       {/* Shortcut Cheat Sheet */}
@@ -303,10 +309,10 @@ export default function Layout({ children, onLogout }: LayoutProps) {
       {/* ===== SIDEBAR (Clinical Dashboard Left Rail) ===== */}
       <aside className={`
         fixed inset-y-0 left-0 z-50 flex flex-col transition-all duration-500 cubic-bezier(0.16, 1, 0.3, 1)
-        lg:relative lg:translate-x-0 border-r border-white/5 shadow-2xl
+        hidden md:flex md:relative md:translate-x-0 border-r border-white/5 shadow-2xl
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        ${isCollapsed ? 'lg:w-[88px]' : 'lg:w-[280px]'}
-        w-[280px]
+        ${isCollapsed ? 'md:w-[5.5rem]' : 'md:w-[17.5rem]'}
+        w-[17.5rem]
       `}
         style={{ background: 'linear-gradient(180deg, #0f3d2e 0%, #134e3a 50%, #166534 100%)' }}
       >
@@ -419,21 +425,34 @@ export default function Layout({ children, onLogout }: LayoutProps) {
 
       {/* ===== CENTRAL WORKSPACE ===== */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative w-full">
-        <header className="h-14 flex items-center justify-between px-5 lg:px-8 bg-surface border-b border-border-subtle flex-shrink-0 z-30">
-          <div className="flex items-center gap-3">
-            <button onClick={toggleSidebar} className="lg:hidden text-foreground p-2 rounded-lg hover:bg-stone-100 dark:hover:bg-white/10 transition-colors focus:outline-none">
-              <Menu size={20} />
-            </button>
-            <h2 className="text-sm font-semibold text-foreground">
-              {PAGE_TITLES[pathname] || 'PharmaMate'}
+        <header className="h-16 flex items-center justify-between px-2 sm:px-6 md:px-8 bg-surface border-b border-border-subtle flex-shrink-0 z-30 shadow-sm gap-1 sm:gap-0">
+          <div className="flex items-center gap-1.5 sm:gap-4 min-w-0 flex-1">
+            {/* Mobile Branding */}
+            <div className="md:hidden flex items-center gap-1 sm:gap-2 shrink-0">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded bg-emerald-600 flex items-center justify-center text-white text-[10px] sm:text-xs font-black shadow-sm">
+                ✚
+              </div>
+              <span className="inline-block text-[12px] sm:text-[15px] font-black tracking-tight text-foreground">PharmaMate</span>
+            </div>
+
+            <div className="hidden md:hidden md:border-none border-l border-border-subtle shrink-0 h-4 min-[360px]:block mx-1" />
+
+            <h2 className="text-[10px] sm:text-[13px] md:text-[15px] font-black tracking-tighter md:tracking-tight text-stone-500 md:text-foreground uppercase truncate shrink">
+              {PAGE_TITLES[pathname] || 'Workspace'}
             </h2>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-3 shrink-0">
             <ConnectivityStatus />
 
+            <button onClick={() => window.dispatchEvent(new Event('toggleAIAssistant'))}
+              className="p-1.5 sm:p-2 rounded-lg transition-colors duration-200 border flex items-center gap-2 text-primary border-primary/20 bg-primary/5 hover:bg-primary/10">
+              <Bot size={15} />
+              <span className="text-xs font-medium hidden md:inline">MediAssist IQ</span>
+            </button>
+
             <button onClick={togglePrecision}
-              className={`p-2 rounded-lg transition-colors duration-200 border flex items-center gap-2 ${isPrecision
+              className={`p-1.5 sm:p-2 rounded-lg transition-colors duration-200 border flex items-center gap-2 ${isPrecision
                 ? 'bg-primary/5 text-primary border-primary/20'
                 : 'text-stone-400 border-border-subtle hover:bg-stone-50 dark:hover:bg-white/5'
                 }`}>
@@ -449,8 +468,8 @@ export default function Layout({ children, onLogout }: LayoutProps) {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8 w-full bg-background transition-colors duration-500 relative scrollbar-hide">
-          <div className="max-w-7xl mx-auto">{children}</div>
+        <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 md:p-8 pb-32 md:pb-12 w-full bg-background transition-colors duration-500 relative scrollbar-hide">
+          <div className="max-w-7xl mx-auto space-y-8">{children}</div>
         </main>
 
         {/* Global Intelligence Overlay */}
@@ -516,6 +535,8 @@ export default function Layout({ children, onLogout }: LayoutProps) {
             </div>
           </div>
         )}
+        {/* Native-style Bottom Nav for Mobile */}
+        <BottomNav />
       </div>
     </div>
   );

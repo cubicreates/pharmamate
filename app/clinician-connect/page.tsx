@@ -5,6 +5,8 @@ import Layout from '@/components/Layout';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { apiRequest } from '@/lib/utils/api';
 import { Send, CheckCircle, Clock, MessageCircle, Info, Search } from 'lucide-react';
+import MobileModeSwitcher from '@/components/MobileModeSwitcher';
+import { MOBILE_CATEGORIES } from '@/lib/constants/navigation';
 
 interface QueryLog {
     id: string;
@@ -92,7 +94,8 @@ function ClinicianConnectContent() {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="cc-workspace animate-fade-in">
+            <div className="cc-workspace space-y-8 pb-12 animate-fade-in">
+                <MobileModeSwitcher options={MOBILE_CATEGORIES.ADMIN} />
                 {/* ── Hero Banner ── */}
                 <div className="cc-hero">
                     <img

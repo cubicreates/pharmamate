@@ -26,6 +26,8 @@ import {
     ScanLine,
     Printer,
 } from 'lucide-react';
+import MobileModeSwitcher from '@/components/MobileModeSwitcher';
+import { MOBILE_CATEGORIES } from '@/lib/constants/navigation';
 
 interface Medicine {
     name: string; dosage: string; frequency: string; duration: string; salt: string;
@@ -179,7 +181,8 @@ export default function CounterPage() {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="counter-workspace">
+            <div className="counter-workspace space-y-8 pb-12">
+                <MobileModeSwitcher options={MOBILE_CATEGORIES.SALES} />
 
                 {/* ============================================ */}
                 {/* IDLE STATE — No prescription loaded yet       */}
