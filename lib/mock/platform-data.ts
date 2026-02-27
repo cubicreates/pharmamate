@@ -40,7 +40,7 @@ export const platformUsers: PlatformUser[] = [
         _id: 'usr_001',
         name: 'Vikram Mehta',
         email: 'vikram@medicare.com',
-        roles: ['CHEMIST_ADMIN'],
+        roles: ['CHEMIST_ADMIN', 'STOREKEEPER'],
         activeRole: 'CHEMIST_ADMIN',
         shopName: 'MediCare Pharmacy — SRM Campus',
         licenseNumber: 'TN-PH-2024-7891',

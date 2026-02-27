@@ -39,6 +39,26 @@ export function PersonaProvider({ children }: { children: React.ReactNode }) {
     const [activeRole, setActiveRole] = useState<UserRole>('CHEMIST_ADMIN');
     const [mounted, setMounted] = useState(false);
 
+    const loginAs = useCallback((userId: string) => {
+        const found = platformUsers.find(u => u._id === userId);
+        if (found) {
+            setUser(found);
+            setActiveRole(found.activeRole);
+            localStorage.setItem('platformUserId', found._id);
+            localStorage.setItem('activeRole', found.activeRole);
+            // Also set legacy keys for backward compat
+            localStorage.setItem('chemUser', JSON.stringify({
+                _id: found._id,
+                name: found.name,
+                email: found.email,
+                shopName: found.shopName,
+                licenseNumber: found.licenseNumber,
+                address: found.address,
+            }));
+            localStorage.setItem('chemToken', 'platform-jwt-token-clinical');
+        }
+    }, []);
+
     // Load persisted persona on mount
     useEffect(() => {
         setMounted(true);
@@ -65,10 +85,15 @@ export function PersonaProvider({ children }: { children: React.ReactNode }) {
                 setActiveRole(savedRole && mapped.roles.includes(savedRole) ? savedRole : mapped.activeRole);
                 localStorage.setItem('platformUserId', mapped._id);
             } catch {
-                // No valid legacy data
+                // If legacy JSON is invalid, default to the first user
+                loginAs(platformUsers[0]._id);
             }
+        } else {
+            // No saved session found (like on a fresh Vercel deployment)
+            // Default to the primary admin active persona
+            loginAs(platformUsers[0]._id);
         }
-    }, []);
+    }, [loginAs]);
 
     const switchRole = useCallback((role: UserRole) => {
         if (!user || !user.roles.includes(role)) return;
@@ -76,25 +101,6 @@ export function PersonaProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('activeRole', role);
     }, [user]);
 
-    const loginAs = useCallback((userId: string) => {
-        const found = platformUsers.find(u => u._id === userId);
-        if (found) {
-            setUser(found);
-            setActiveRole(found.activeRole);
-            localStorage.setItem('platformUserId', found._id);
-            localStorage.setItem('activeRole', found.activeRole);
-            // Also set legacy keys for backward compat
-            localStorage.setItem('chemUser', JSON.stringify({
-                _id: found._id,
-                name: found.name,
-                email: found.email,
-                shopName: found.shopName,
-                licenseNumber: found.licenseNumber,
-                address: found.address,
-            }));
-            localStorage.setItem('chemToken', 'platform-jwt-token-clinical');
-        }
-    }, []);
 
     const logout = useCallback(() => {
         setUser(null);
