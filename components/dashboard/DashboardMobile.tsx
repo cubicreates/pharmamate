@@ -31,7 +31,11 @@ interface DashboardMobileProps {
 }
 
 export function DashboardMobile({ user, orders, queue, stats, loading, greeting }: DashboardMobileProps) {
-    const today = new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+    const [today, setToday] = React.useState('');
+
+    React.useEffect(() => {
+        setToday(new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }));
+    }, []);
 
     if (!user) return null;
 
@@ -46,7 +50,7 @@ export function DashboardMobile({ user, orders, queue, stats, loading, greeting 
                         {greeting}, {user.name?.split(' ')[0] || 'Pharmacist'}
                     </h1>
                     <p className="text-xs text-stone-500 font-medium uppercase tracking-widest mt-0.5">
-                        {today} · <span className="text-emerald-500">System Online</span>
+                        {today ? `${today} · ` : ''}<span className="text-emerald-500">System Online</span>
                     </p>
                 </div>
                 <div className="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center border border-border-subtle overflow-hidden">

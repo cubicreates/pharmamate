@@ -445,20 +445,59 @@ export default function Layout({ children, onLogout }: LayoutProps) {
           <div className="flex items-center gap-1 sm:gap-3 shrink-0">
             <ConnectivityStatus />
 
+            {/* Hide non-critical buttons on ultra-narrow phones */}
             <button onClick={() => window.dispatchEvent(new Event('toggleAIAssistant'))}
-              className="p-1.5 sm:p-2 rounded-lg transition-colors duration-200 border flex items-center gap-2 text-primary border-primary/20 bg-primary/5 hover:bg-primary/10">
+              className="hidden min-[400px]:flex p-1.5 sm:p-2 rounded-lg transition-colors duration-200 border items-center gap-2 text-primary border-primary/20 bg-primary/5 hover:bg-primary/10">
               <Bot size={15} />
               <span className="text-xs font-medium hidden md:inline">MediAssist IQ</span>
             </button>
 
             <button onClick={togglePrecision}
-              className={`p-1.5 sm:p-2 rounded-lg transition-colors duration-200 border flex items-center gap-2 ${isPrecision
+              className={`hidden sm:flex p-1.5 sm:p-2 rounded-lg transition-colors duration-200 border items-center gap-2 ${isPrecision
                 ? 'bg-primary/5 text-primary border-primary/20'
                 : 'text-stone-400 border-border-subtle hover:bg-stone-50 dark:hover:bg-white/5'
                 }`}>
               <Maximize2 size={15} />
               <span className="text-xs font-medium hidden md:inline">{isPrecision ? 'Aesthetic' : 'Precision'}</span>
             </button>
+
+            {/* Mobile Persona Switcher */}
+            {availableRoles.length > 1 && (
+              <div className="md:hidden relative">
+                <button
+                  onClick={() => setShowPersonaSwitcher(!showPersonaSwitcher)}
+                  className="w-[26px] h-[26px] sm:w-[32px] sm:h-[32px] rounded-full bg-emerald-600/10 border border-emerald-600/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-[11px] sm:text-xs shadow-sm"
+                >
+                  {user.name ? user.name[0].toUpperCase() : 'U'}
+                  <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full border border-surface ${ROLE_COLORS[activeRole]}`} />
+                </button>
+
+                {showPersonaSwitcher && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-surface border border-border-subtle rounded-xl shadow-2xl overflow-hidden py-1 z-[100] animate-fade-in">
+                    <div className="px-3 py-2 border-b border-border-subtle bg-black/5 dark:bg-white/5">
+                      <p className="text-[9px] uppercase font-black tracking-widest text-stone-500 mb-0.5">Switch Persona</p>
+                      <p className="text-sm font-bold truncate text-foreground">{user.name}</p>
+                    </div>
+                    <div className="py-1">
+                      {availableRoles.map(role => (
+                        <button
+                          key={role}
+                          onClick={() => switchRole(role)}
+                          className={`w-full flex items-center gap-2 px-3 py-2.5 text-xs font-semibold transition-colors ${activeRole === role
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-stone-500 hover:bg-stone-100 dark:hover:bg-white/5 hover:text-foreground'
+                            }`}
+                        >
+                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${ROLE_COLORS[role]}`} />
+                          {ROLE_LABELS[role]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <ThemeToggle />
             {mounted && (
               <div className="text-xs font-medium px-3 py-2 rounded-lg text-stone-500 dark:text-stone-400 border border-border-subtle hidden sm:block">
