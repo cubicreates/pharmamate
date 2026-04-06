@@ -1,0 +1,9 @@
+[00:00:03.856] Server  LOG     ✓ Ready in 2.7s
+[00:00:06.891] Server  LOG     ○ Compiling / ...
+[00:00:24.819] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:25.513] Browser DEBUG   [PharmaMate API] GET /api/queue 
+[00:00:25.715] Browser DEBUG   [PharmaMate API] GET /api/ai/knowledge 
+[00:00:25.715] Browser DEBUG   [PharmaMate API] GET /api/inventory 
+[00:00:25.715] Browser DEBUG   [PharmaMate API] GET /api/orders/chemist/usr_001 
+[00:00:27.324] Browser DEBUG   [PharmaMate API] GET /api/ai/knowledge 
+[00:00:27.324] Browser DEBUG   [PharmaMate API] GET /api/ai/knowledge 

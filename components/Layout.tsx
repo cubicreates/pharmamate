@@ -11,28 +11,20 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
-  ClipboardCheck,
   ShoppingBag,
   Package,
-  Users,
-  Repeat2,
-  Truck,
-  PhoneCall,
-  LogOut,
-  Maximize2,
+  Settings,
+  LucideIcon,
+  UserCog,
   ChevronLeft,
   ChevronRight,
-  Settings,
-  TrendingUp,
-  LucideIcon,
-  ScanLine,
-  Building2,
-  UserCog,
+  LogOut,
+  Zap,
+  RefreshCcw,
   ShieldCheck,
   Calculator,
-  RefreshCcw,
-  Zap,
-  Bot
+  Bot,
+  Maximize2
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import AIAssistant from './AIAssistant';
@@ -63,38 +55,21 @@ interface NavItem {
 /** Primary application navigation paths */
 const NAV_ITEMS: NavItem[] = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard, description: 'Operational Pulse', key: '1' },
-  { href: '/counter', label: 'Counter', icon: ClipboardCheck, description: 'Clinical Service', key: '2' },
-  { href: '/pos', label: 'POS Mode', icon: ScanLine, description: 'High-Speed Billing', key: 'p', roles: ['CHEMIST_ADMIN', 'STOREKEEPER'] },
-  { href: '/orders', label: 'Orders', icon: ShoppingBag, description: 'Fulfillment Feed', key: '3' },
-  { href: '/inventory', label: 'Inventory', icon: Package, description: 'Stock Auditor', key: '4', roles: ['CHEMIST_ADMIN'] },
-  { href: '/revenue', label: 'Revenue', icon: TrendingUp, description: 'Financial Overview', key: '9', roles: ['CHEMIST_ADMIN'] },
+  { href: '/orders', label: 'Orders', icon: ShoppingBag, description: 'Fulfillment Feed', key: '2' },
+  { href: '/inventory', label: 'Inventory', icon: Package, description: 'Stock Auditor', key: '3' },
 ];
 
-/** Specialized utilities for deeper pharmacopeia needs */
+/** Specialized utilities */
 const TOOL_ITEMS: NavItem[] = [
-  { href: '/queue', label: 'Live Queue', icon: Users, description: 'Counter Waiting List', key: '5' },
-  { href: '/substitutes', label: 'Substitutes Finder', icon: Repeat2, description: 'Salt Composition Lookup', key: '6' },
-  { href: '/dispatch', label: 'Dispatch Control', icon: Truck, description: 'Delivery Grid', key: '7', roles: ['CHEMIST_ADMIN'] },
-  { href: '/clinician-connect', label: 'Clinician Connect', icon: PhoneCall, description: 'Liaison & Consultations', key: '10' },
-  { href: '/vendors', label: 'Vendor Portal', icon: Building2, description: 'B2B Supply Chain', key: 'v', roles: ['CHEMIST_ADMIN'] },
-  { href: '/staff', label: 'Staff Management', icon: UserCog, description: 'Shifts & HR', key: 'm', roles: ['CHEMIST_ADMIN'] },
-  { href: '/settings', label: 'Settings', icon: Settings, description: 'Application Preferences', key: '11' },
+  { href: '/settings', label: 'Settings', icon: Settings, description: 'Application Preferences', key: '4' },
+  { href: '/user/me', label: 'My Profile', icon: UserCog, description: 'Account', key: '5' },
 ];
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Dashboard',
-  '/counter': 'Counter Service',
-  '/pos': 'POS Mode',
-  '/orders': 'Orders',
+  '/orders': 'Live Orders',
   '/inventory': 'Inventory',
-  '/queue': 'Queue Management',
-  '/substitutes': 'Substitutes Finder',
-  '/dispatch': 'Dispatch Hub',
-  '/clinician-connect': 'Clinician Connect',
   '/settings': 'Settings',
-  '/revenue': 'Revenue & Billing',
-  '/vendors': 'Vendor Portal',
-  '/staff': 'Staff Management',
   '/user/me': 'My Profile',
 };
 

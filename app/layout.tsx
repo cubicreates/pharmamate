@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import PharmaClientWrapper from "@/components/PharmaClientWrapper";
 import DevToolbar from "@/components/DevToolbar";
+import TitleBar from "@/components/TitleBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,7 +37,8 @@ export default function RootLayout({
           `
         }} />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} pt-10 desktop:pt-10`}>
+        <TitleBar />
         <PharmaClientWrapper>
           {children}
           <DevToolbar />

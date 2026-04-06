@@ -16,7 +16,7 @@ interface CheckoutModalProps {
     isOpen: boolean;
     onClose: () => void;
     total: number;
-    onSelectPayment: (method: 'CASH' | 'UPI' | 'CARD') => void;
+    onSelectPayment: (method: 'CASH' | 'UPI' | 'CARD' | 'INSURANCE') => void;
 }
 
 export function CheckoutModal({ isOpen, onClose, total, onSelectPayment }: CheckoutModalProps) {
@@ -25,7 +25,8 @@ export function CheckoutModal({ isOpen, onClose, total, onSelectPayment }: Check
     const paymentMethods = [
         { id: 'CASH', label: 'Cash Payment', icon: <Banknote size={24} />, desc: 'Physical currency collection', color: 'bg-emerald-500' },
         { id: 'UPI', label: 'UPI / QR Scan', icon: <Smartphone size={24} />, desc: 'Google Pay, PhonePe, Paytm', color: 'bg-blue-500' },
-        { id: 'CARD', label: 'Debit/Credit Card', icon: <CreditCard size={24} />, desc: 'POS Terminal processing', color: 'bg-purple-500' }
+        { id: 'CARD', label: 'Debit/Credit Card', icon: <CreditCard size={24} />, desc: 'POS Terminal processing', color: 'bg-purple-500' },
+        { id: 'INSURANCE', label: 'HealthBuddy Insurance', icon: <Lock size={24} />, desc: 'Direct-to-Payer Settlement', color: 'bg-slate-900 border border-white/10' }
     ] as const;
 
     const ModalContent = () => (
@@ -54,9 +55,18 @@ export function CheckoutModal({ isOpen, onClose, total, onSelectPayment }: Check
                 <h2 className="text-3xl font-black tracking-tight">Select Payment</h2>
             </div>
 
-            <div className="mb-8 p-6 bg-stone-50 dark:bg-stone-900/50 rounded-3xl border border-border-subtle flex items-center justify-between">
-                <span className="text-sm font-bold text-stone-500 uppercase tracking-widest">Total Payable</span>
-                <span className="text-3xl font-black text-primary tabular-nums">₹{total.toFixed(2)}</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div className="p-6 bg-stone-50 dark:bg-stone-900/50 rounded-3xl border border-border-subtle flex flex-col justify-center">
+                    <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-1">Total Payable</span>
+                    <span className="text-3xl font-black text-primary tabular-nums">₹{total.toFixed(2)}</span>
+                </div>
+                <div className="p-6 bg-emerald-500/5 border border-emerald-500/20 rounded-3xl flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-lg"><Lock size={18} /></div>
+                    <div>
+                        <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest leading-none mb-1">Payer Sync</p>
+                        <p className="text-xs font-bold text-slate-800 dark:text-emerald-100">Ready for Claim</p>
+                    </div>
+                </div>
             </div>
 
             <div className="space-y-4">

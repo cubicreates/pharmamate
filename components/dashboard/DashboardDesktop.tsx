@@ -3,8 +3,7 @@
 import React from 'react';
 import { StatGrid } from './StatGrid';
 import { ActivityTable } from './ActivityTable';
-import { QueueSidebar } from './QueueSidebar';
-import { TrendingUp, AlertTriangle } from 'lucide-react';
+import { TrendingUp, ShoppingBag } from 'lucide-react';
 import { User, Order, QueueItem } from '@/lib/types';
 
 interface DashboardDesktopProps {
@@ -23,7 +22,7 @@ interface DashboardDesktopProps {
     greeting: string;
 }
 
-export function DashboardDesktop({ user, orders, queue, stats, loading, mounted, greeting }: DashboardDesktopProps) {
+export function DashboardDesktop({ user, orders, stats, loading, mounted, greeting }: DashboardDesktopProps) {
     if (!user) return null;
 
     return (
@@ -90,8 +89,8 @@ export function DashboardDesktop({ user, orders, queue, stats, loading, mounted,
             <StatGrid stats={stats} loading={loading} />
 
             {/* Main Content */}
-            <div className="grid grid-cols-4 gap-6 items-start">
-                <div className="col-span-3 space-y-6">
+            <div className="grid grid-cols-1 gap-6 items-start">
+                <div className="space-y-6">
                     <ActivityTable orders={orders} loading={loading} />
 
                     {/* Operational Insights */}
@@ -120,34 +119,26 @@ export function DashboardDesktop({ user, orders, queue, stats, loading, mounted,
 
                         <div className="bg-surface border border-border-subtle rounded-xl p-5">
                             <div className="flex items-center gap-2.5 mb-4">
-                                <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
-                                    <AlertTriangle size={16} className="text-amber-600 dark:text-amber-400" />
+                                <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+                                    <ShoppingBag size={16} className="text-emerald-600 dark:text-emerald-400" />
                                 </div>
                                 <h4 className="text-xs font-semibold text-stone-500 dark:text-stone-400">
-                                    Expiry Alerts
+                                    Live Fulfillment
                                 </h4>
                             </div>
                             <div className="flex items-end justify-between">
                                 <div>
                                     <p className="text-3xl font-semibold text-foreground tabular-nums">
-                                        {loading ? '\u2014' : stats.expiring}
+                                        {loading ? '\u2014' : stats.pending}
                                     </p>
-                                    <p className="text-xs text-stone-400 mt-1">Expiring within 90 days</p>
+                                    <p className="text-xs text-stone-400 mt-1">Active Orders</p>
                                 </div>
-                                <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${stats.expiring > 5
-                                    ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400'
-                                    : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'
-                                    }`}>
-                                    {stats.expiring > 5 ? 'Review needed' : 'All clear'}
+                                <span className={`text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400`}>
+                                    Real-time Stream
                                 </span>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {/* Queue Sidebar */}
-                <div className="col-span-1 h-full min-h-[500px]">
-                    <QueueSidebar queue={queue} loading={loading} mounted={mounted} />
                 </div>
             </div>
         </div>

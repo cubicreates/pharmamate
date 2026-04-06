@@ -6,17 +6,14 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
     LayoutDashboard,
-    ScanLine,
-    Clock,
-    TrendingUp,
-    Package,
-    Repeat2
+    ShoppingBag,
+    Package
 } from 'lucide-react';
 import { usePersona } from '@/lib/context/PersonaContext';
 
 export default function BottomNav() {
     const pathname = usePathname();
-    const { activeRole } = usePersona();
+    const { } = usePersona();
 
     const isActive = (path: string) => {
         if (path === '/') return pathname === '/';
@@ -25,25 +22,14 @@ export default function BottomNav() {
 
     const mainItems = [
         { href: '/', label: 'Home', icon: LayoutDashboard },
-        { href: '/pos', label: 'Sales', icon: ScanLine },
-        { href: '/queue', label: 'Flow', icon: Clock },
-        ...(activeRole === 'CHEMIST_ADMIN'
-            ? [
-                { href: '/inventory', label: 'Stock', icon: Package },
-                { href: '/revenue', label: 'Admin', icon: TrendingUp }
-            ]
-            : [
-                { href: '/substitutes', label: 'Alts', icon: Repeat2 }
-            ]
-        )
+        { href: '/orders', label: 'Orders', icon: ShoppingBag },
+        { href: '/inventory', label: 'Stock', icon: Package }
     ];
 
     const getIsTabActive = (label: string, itemPath: string) => {
         const active = isActive(itemPath);
-        if (label === 'Sales' && (pathname.startsWith('/pos') || pathname.startsWith('/counter') || pathname.startsWith('/substitutes'))) return true;
-        if (label === 'Flow' && (pathname.startsWith('/queue') || pathname.startsWith('/orders') || pathname.startsWith('/dispatch'))) return true;
-        if (label === 'Stock' && (pathname.startsWith('/inventory') || pathname.startsWith('/vendors'))) return true;
-        if (label === 'Admin' && (pathname.startsWith('/revenue') || pathname.startsWith('/staff') || pathname.startsWith('/clinician-connect') || pathname.startsWith('/settings'))) return true;
+        if (label === 'Orders' && pathname.startsWith('/orders')) return true;
+        if (label === 'Stock' && pathname.startsWith('/inventory')) return true;
         return active;
     };
 

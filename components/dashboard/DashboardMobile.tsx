@@ -2,13 +2,13 @@
 
 import React from 'react';
 import {
-    PlusCircle,
-    Scan,
-    ChevronRight,
-    Clock,
-    AlertCircle,
+    ShoppingBag,
     Package,
-    TrendingUp
+    ChevronRight,
+    Search,
+    AlertCircle,
+    TrendingUp,
+    CheckCircle2
 } from 'lucide-react';
 import Link from 'next/link';
 import { User, Order, QueueItem } from '@/lib/types';
@@ -30,7 +30,7 @@ interface DashboardMobileProps {
     greeting: string;
 }
 
-export function DashboardMobile({ user, orders, queue, stats, loading, greeting }: DashboardMobileProps) {
+export function DashboardMobile({ user, orders, stats, loading, greeting }: DashboardMobileProps) {
     const [today, setToday] = React.useState('');
 
     React.useEffect(() => {
@@ -60,13 +60,13 @@ export function DashboardMobile({ user, orders, queue, stats, loading, greeting 
 
             {/* Quick Actions Grid - Big Tap Targets */}
             <div className="grid grid-cols-2 gap-4">
-                <Link href="/counter" className="flex flex-col items-center justify-center p-6 bg-primary text-white rounded-3xl shadow-lg shadow-primary/20 transition-transform active:scale-95 text-center">
-                    <PlusCircle size={24} className="mb-2" />
-                    <span className="text-sm font-bold">New Sale</span>
+                <Link href="/orders" className="flex flex-col items-center justify-center p-6 bg-emerald-600 text-white rounded-3xl shadow-lg shadow-emerald-500/20 transition-transform active:scale-95 text-center">
+                    <ShoppingBag size={24} className="mb-2" />
+                    <span className="text-sm font-bold text-white">Live Orders</span>
                 </Link>
-                <Link href="/pos" className="flex flex-col items-center justify-center p-6 bg-surface border border-border-subtle rounded-3xl transition-transform active:scale-95 text-center shadow-sm">
-                    <Scan size={24} className="mb-2 text-primary" />
-                    <span className="text-sm font-bold">POS Scanner</span>
+                <Link href="/inventory" className="flex flex-col items-center justify-center p-6 bg-surface border border-border-subtle rounded-3xl transition-transform active:scale-95 text-center shadow-sm">
+                    <Search size={24} className="mb-2 text-emerald-600" />
+                    <span className="text-sm font-bold">Stock Check</span>
                 </Link>
             </div>
 
@@ -94,27 +94,29 @@ export function DashboardMobile({ user, orders, queue, stats, loading, greeting 
                 </div>
             </div>
 
-            {/* Live Queue Strip */}
+            {/* Active Fulfillment Summary */}
             <div>
                 <div className="flex items-center justify-between mb-3 px-1">
-                    <h3 className="text-sm font-bold">Ready for Pickup</h3>
-                    <Link href="/queue" className="text-xs font-bold text-primary flex items-center gap-1">
-                        View All <ChevronRight size={14} />
+                    <h3 className="text-sm font-bold">Fulfillment Pipeline</h3>
+                    <Link href="/orders" className="text-xs font-bold text-emerald-600 flex items-center gap-1 uppercase tracking-widest">
+                        Stream Orders <ChevronRight size={14} />
                     </Link>
                 </div>
                 <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide px-1">
-                    {queue.length === 0 ? (
-                        <div className="flex-shrink-0 w-48 p-4 rounded-2xl bg-stone-50 dark:bg-white/[0.02] border border-dashed border-border-subtle flex items-center justify-center">
-                            <p className="text-[10px] text-stone-400 font-bold uppercase">Queue Empty</p>
+                    {orders.filter(o => o.status === 'Pending').length === 0 ? (
+                        <div className="flex-shrink-0 w-full p-6 rounded-2xl bg-emerald-500/5 border border-dashed border-emerald-500/20 flex flex-col items-center justify-center text-center">
+                            <CheckCircle2 size={24} className="text-emerald-500 mb-2" />
+                            <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest leading-none">Queue Synchronized</p>
+                            <p className="text-[8px] text-emerald-600/50 mt-1 uppercase font-black">All active orders processed</p>
                         </div>
                     ) : (
-                        queue.map((item, i) => (
+                        orders.filter(o => o.status === 'Pending').map((item, i) => (
                             <div key={i} className="flex-shrink-0 w-48 p-4 rounded-2xl bg-surface border border-border-subtle shadow-sm">
                                 <p className="text-xs font-bold truncate">{item.patientName}</p>
                                 <p className="text-[10px] text-stone-400 mt-1 uppercase font-bold tracking-wider">{item.patientPrn}</p>
                                 <div className="mt-3 flex items-center justify-between">
-                                    <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-md">READY</span>
-                                    <Clock size={12} className="text-stone-300" />
+                                    <span className="text-[10px] font-bold bg-amber-500/10 text-amber-500 px-2 py-1 rounded-md uppercase">PENDING</span>
+                                    <ShoppingBag size={12} className="text-stone-300" />
                                 </div>
                             </div>
                         ))

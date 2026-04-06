@@ -3,9 +3,9 @@
   "version": "0.1.6.7",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 5114",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 5114",
     "lint": "eslint"
   },
   "dependencies": {
@@ -17,13 +17,13 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.4",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^10.0.1",
     "eslint-config-next": "^16.1.6",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.2.1",
     "typescript": "^5"
   }
 }
