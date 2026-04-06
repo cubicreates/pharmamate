@@ -3,7 +3,7 @@
 import React from 'react';
 import { StatGrid } from './StatGrid';
 import { ActivityTable } from './ActivityTable';
-import { TrendingUp, ShoppingBag } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import { User, Order, QueueItem } from '@/lib/types';
 
 interface DashboardDesktopProps {
@@ -94,29 +94,7 @@ export function DashboardDesktop({ user, orders, stats, loading, mounted, greeti
                     <ActivityTable orders={orders} loading={loading} />
 
                     {/* Operational Insights */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-surface border border-border-subtle rounded-xl p-5">
-                            <div className="flex items-center gap-2.5 mb-4">
-                                <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center">
-                                    <TrendingUp size={16} className="text-blue-600 dark:text-blue-400" />
-                                </div>
-                                <h4 className="text-xs font-semibold text-stone-500 dark:text-stone-400">
-                                    Inventory Health
-                                </h4>
-                            </div>
-                            <div className="flex items-end justify-between">
-                                <div>
-                                    <p className="text-3xl font-semibold text-foreground tabular-nums">94%</p>
-                                    <p className="text-xs text-stone-400 mt-1">Sufficient Stock</p>
-                                </div>
-                                <div className="w-24">
-                                    <div className="w-full h-2 bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden">
-                                        <div className="h-full bg-blue-500 rounded-full" style={{ width: '94%' }} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                    <div className="grid grid-cols-1 gap-4">
                         <div className="bg-surface border border-border-subtle rounded-xl p-5">
                             <div className="flex items-center gap-2.5 mb-4">
                                 <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">

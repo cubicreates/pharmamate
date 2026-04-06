@@ -6,44 +6,54 @@
  * A floating developer overlay that lets you instantly switch between
  * mock users to test how each role sees the application. Only renders
  * in development mode (NODE_ENV !== 'production').
- *
- * Usage: Drop <DevToolbar /> inside app/layout.tsx (inside PharmaClientWrapper).
  */
 
 import React, { useState } from 'react';
 import { usePersona } from '@/lib/context/PersonaContext';
-import { platformUsers } from '@/lib/mock/platform-data';
-import type { UserRole } from '@/lib/mock/platform-data';
-import { ChevronUp, FlaskConical, X, UserCog, User, Check } from 'lucide-react';
+import { ChevronUp, FlaskConical, X, User, Check, ShieldCheck } from 'lucide-react';
 
-const ROLE_META: Record<UserRole, { label: string; color: string; bg: string; dot: string }> = {
-    CHEMIST_ADMIN: {
-        label: 'Admin',
+const ROLE_META: Record<string, { label: string; color: string; bg: string; dot: string }> = {
+    PHARMACIST: {
+        label: 'Pharmacist',
         color: '#10b981',
         bg: 'rgba(16,185,129,0.12)',
         dot: '#10b981',
     },
-    STOREKEEPER: {
-        label: 'Storekeeper',
+    ADMIN: {
+        label: 'Admin',
         color: '#3b82f6',
         bg: 'rgba(59,130,246,0.12)',
         dot: '#3b82f6',
     },
+    STOREKEEPER: {
+        label: 'Storekeeper',
+        color: '#f59e0b',
+        bg: 'rgba(245,158,11,0.12)',
+        dot: '#f59e0b',
+    },
+    CHEMIST_ADMIN: {
+        label: 'Chemist Admin',
+        color: '#8b5cf6',
+        bg: 'rgba(139,92,246,0.12)',
+        dot: '#8b5cf6',
+    }
 };
 
-const USER_ICONS: Record<string, React.ReactNode> = {
-    usr_001: <UserCog size={14} />,
-    usr_002: <User size={14} />,
+const DEFAULT_META = {
+    label: 'Standard User',
+    color: '#a8a29e',
+    bg: 'rgba(168,162,158,0.12)',
+    dot: '#a8a29e',
 };
 
 export default function DevToolbar() {
     const [open, setOpen] = useState(false);
-    const { user, activeRole, loginAs, switchRole } = usePersona();
+    const { user, activeRole } = usePersona();
 
     // Only render in development
     if (process.env.NODE_ENV === 'production') return null;
 
-    const activeMeta = ROLE_META[activeRole];
+    const activeMeta = ROLE_META[activeRole] || DEFAULT_META;
 
     return (
         <div style={{
@@ -65,137 +75,42 @@ export default function DevToolbar() {
                     boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
                     animation: 'devToolbarSlide 0.18s ease-out',
                 }}>
-                    {/* Header */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                             <FlaskConical size={13} color="#a8a29e" />
                             <span style={{ fontSize: 11, fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                Persona Simulator
+                                Clinical Session
                             </span>
                         </div>
-                        <button
-                            onClick={() => setOpen(false)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#57534e', padding: 2, lineHeight: 1 }}
-                        >
+                        <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#57534e' }}>
                             <X size={13} />
                         </button>
                     </div>
 
-                    {/* Active badge */}
                     <div style={{
                         background: activeMeta.bg,
                         border: `1px solid ${activeMeta.color}30`,
                         borderRadius: 8,
-                        padding: '8px 10px',
-                        marginBottom: 12,
+                        padding: '12px',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 8,
+                        gap: 12,
                     }}>
-                        <div style={{ width: 7, height: 7, borderRadius: '50%', background: activeMeta.dot, flexShrink: 0 }} />
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <ShieldCheck size={20} color={activeMeta.color} />
+                        </div>
                         <div style={{ minWidth: 0 }}>
-                            <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {user?.name ?? '—'}
+                            <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {user?.full_name || user?.name || 'Authorized Session'}
                             </p>
-                            <p style={{ margin: 0, fontSize: 10, color: activeMeta.color, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                            <p style={{ margin: 0, fontSize: 10, color: activeMeta.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                 {activeMeta.label}
                             </p>
                         </div>
                     </div>
 
-                    {/* Users section */}
-                    <p style={{ margin: '0 0 6px', fontSize: 10, fontWeight: 700, color: '#57534e', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                        Switch User
-                    </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 12 }}>
-                        {platformUsers.map(u => {
-                            const isActive = user?._id === u._id;
-                            return (
-                                <button
-                                    key={u._id}
-                                    onClick={() => loginAs(u._id)}
-                                    style={{
-                                        background: isActive ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.04)',
-                                        border: `1px solid ${isActive ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.06)'}`,
-                                        borderRadius: 8,
-                                        padding: '8px 10px',
-                                        cursor: 'pointer',
-                                        width: '100%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 9,
-                                        transition: 'all 0.15s',
-                                        textAlign: 'left',
-                                    }}
-                                >
-                                    <div style={{
-                                        width: 28, height: 28, borderRadius: 8,
-                                        background: isActive ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.06)',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        color: isActive ? '#10b981' : '#78716c',
-                                        flexShrink: 0,
-                                    }}>
-                                        {USER_ICONS[u._id] ?? <User size={14} />}
-                                    </div>
-                                    <div style={{ minWidth: 0, flex: 1 }}>
-                                        <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: isActive ? '#fff' : '#a8a29e', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                            {u.name}
-                                        </p>
-                                        <p style={{ margin: 0, fontSize: 10, color: '#57534e', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                            {u.roles.join(', ')}
-                                        </p>
-                                    </div>
-                                    {isActive && <Check size={12} color="#10b981" style={{ flexShrink: 0 }} />}
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Role switcher (only for multi-role users) */}
-                    {(user?.roles?.length ?? 0) > 1 && (
-                        <>
-                            <p style={{ margin: '0 0 6px', fontSize: 10, fontWeight: 700, color: '#57534e', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                Switch Role
-                            </p>
-                            <div style={{ display: 'flex', gap: 4 }}>
-                                {(user?.roles ?? []).map((role: UserRole) => {
-                                    const meta = ROLE_META[role];
-                                    const isCurrent = activeRole === role;
-                                    return (
-                                        <button
-                                            key={role}
-                                            onClick={() => switchRole(role)}
-                                            style={{
-                                                flex: 1,
-                                                background: isCurrent ? meta.bg : 'rgba(255,255,255,0.04)',
-                                                border: `1px solid ${isCurrent ? meta.color + '40' : 'rgba(255,255,255,0.06)'}`,
-                                                borderRadius: 7,
-                                                padding: '7px 8px',
-                                                cursor: 'pointer',
-                                                color: isCurrent ? meta.color : '#78716c',
-                                                fontSize: 10,
-                                                fontWeight: 700,
-                                                textTransform: 'uppercase',
-                                                letterSpacing: '0.06em',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                gap: 5,
-                                                transition: 'all 0.15s',
-                                            }}
-                                        >
-                                            <div style={{ width: 5, height: 5, borderRadius: '50%', background: isCurrent ? meta.dot : '#57534e' }} />
-                                            {meta.label}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </>
-                    )}
-
-                    {/* Footer note */}
-                    <p style={{ margin: '12px 0 0', fontSize: 10, color: '#44403c', textAlign: 'center' }}>
-                        Dev only · hidden in production
+                    <p style={{ margin: '12px 0 0', fontSize: 9, color: '#44403c', textAlign: 'center', fontStyle: 'italic' }}>
+                        Connected via MediAuth SSO · Environment: Dev
                     </p>
                 </div>
             )}
@@ -206,33 +121,31 @@ export default function DevToolbar() {
                 style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 8,
+                    gap: 10,
                     background: '#1c1917',
                     border: '1px solid rgba(255,255,255,0.12)',
                     borderRadius: 99,
-                    padding: '8px 14px 8px 10px',
+                    padding: '8px 16px 8px 10px',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                     transition: 'all 0.2s',
                     color: '#fff',
-                    userSelect: 'none',
                 }}
-                title="Open persona simulator"
             >
                 <div style={{
-                    width: 22, height: 22, borderRadius: 6,
+                    width: 24, height: 24, borderRadius: 8,
                     background: activeMeta.bg,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
                     <FlaskConical size={12} color={activeMeta.color} />
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#d6d3d1' }}>
-                    {user?.name?.split(' ')[0] ?? 'DevMode'}
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#d6d3d1', letterSpacing: '0.02em' }}>
+                    {(user?.full_name || user?.name || 'Local').split(' ')[0]}
                 </span>
                 <div style={{ width: 6, height: 6, borderRadius: '50%', background: activeMeta.dot }} />
                 <ChevronUp
                     size={11}
-                    color="#78716c"
+                    color="#57534e"
                     style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
                 />
             </button>

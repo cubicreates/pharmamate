@@ -1,125 +1,87 @@
 /**
- * @fileoverview Persona Context — Multi-Role State Management
+ * @fileoverview Persona Context — Unified Auth Integration
  * 
- * Manages the authenticated user's roles (Admin / Storekeeper).
- * The active role determines sidebar visibility and page access.
+ * Manages the authenticated user's session by reading from the common
+ * MediAssist Auth (SSO) storage keys.
  */
 
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import type { UserRole, PlatformUser } from '@/lib/mock/platform-data';
-import { platformUsers } from '@/lib/mock/platform-data';
+
+// Use standard User type as defined in auth
+interface AuthUser {
+    internal_id: string;
+    full_name: string;
+    username: string;
+    email: string;
+    phone: string;
+    prn: string;
+    type: string; 
+    shopName?: string;
+}
 
 interface PersonaContextType {
-    /** The full user profile with all roles */
-    user: PlatformUser | null;
-    /** Currently active role determining UI display */
-    activeRole: UserRole;
-    /** All roles the user has */
-    availableRoles: UserRole[];
-    /** Switch to a different role */
-    switchRole: (role: UserRole) => void;
-    /** Whether the user is in admin mode */
+    user: AuthUser | null;
+    activeRole: string;
+    availableRoles: string[];
+    switchRole: (role: string) => void;
     isAdmin: boolean;
-    /** Whether the user is in storekeeper mode */
-    isStorekeeper: boolean;
-    /** Login with a specific user (by index in mock) */
-    loginAs: (userId: string) => void;
-    /** Logout */
     logout: () => void;
-    /** Whether context is ready */
     mounted: boolean;
 }
 
 const PersonaContext = createContext<PersonaContextType | null>(null);
 
 export function PersonaProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<PlatformUser | null>(null);
-    const [activeRole, setActiveRole] = useState<UserRole>('CHEMIST_ADMIN');
+    const [user, setUser] = useState<AuthUser | null>(null);
+    const [activeRole, setActiveRole] = useState<string>('PHARMACIST');
     const [mounted, setMounted] = useState(false);
 
-    const loginAs = useCallback((userId: string) => {
-        const found = platformUsers.find(u => u._id === userId);
-        if (found) {
-            setUser(found);
-            setActiveRole(found.activeRole);
-            localStorage.setItem('platformUserId', found._id);
-            localStorage.setItem('activeRole', found.activeRole);
-            // Also set legacy keys for backward compat
-            localStorage.setItem('chemUser', JSON.stringify({
-                _id: found._id,
-                name: found.name,
-                email: found.email,
-                shopName: found.shopName,
-                licenseNumber: found.licenseNumber,
-                address: found.address,
-            }));
-            localStorage.setItem('chemToken', 'platform-jwt-token-clinical');
-        }
-    }, []);
-
-    // Load persisted persona on mount
-    useEffect(() => {
-        setMounted(true);
-        const savedUserId = localStorage.getItem('platformUserId') || sessionStorage.getItem('platformUserId');
-        const savedRole = localStorage.getItem('activeRole') as UserRole | null;
-
-        if (savedUserId) {
-            const found = platformUsers.find(u => u._id === savedUserId);
-            if (found) {
-                setUser(found);
-                setActiveRole(savedRole && found.roles.includes(savedRole) ? savedRole : found.activeRole);
-                return;
-            }
-        }
-
-        // Fallback: Check legacy chemUser for backward compat
-        const legacyUser = localStorage.getItem('chemUser') || sessionStorage.getItem('chemUser');
-        if (legacyUser) {
-            try {
-                const parsed = JSON.parse(legacyUser);
-                // Map legacy chemist to platform user
-                const mapped = platformUsers.find(u => u.email === parsed.email) || platformUsers[0];
-                setUser(mapped);
-                setActiveRole(savedRole && mapped.roles.includes(savedRole) ? savedRole : mapped.activeRole);
-                localStorage.setItem('platformUserId', mapped._id);
-            } catch {
-                // If legacy JSON is invalid, default to the first user
-                loginAs(platformUsers[0]._id);
-            }
-        } else {
-            // No saved session found (like on a fresh Vercel deployment)
-            // Default to the primary admin active persona
-            loginAs(platformUsers[0]._id);
-        }
-    }, [loginAs]);
-
-    const switchRole = useCallback((role: UserRole) => {
-        if (!user || !user.roles.includes(role)) return;
-        setActiveRole(role);
-        localStorage.setItem('activeRole', role);
-    }, [user]);
-
+    // Common Auth Keys (Shared with Auth Portal)
+    const AUTH_USER_KEY = 'ma_user';
+    const AUTH_TOKEN_KEY = 'ma_token';
 
     const logout = useCallback(() => {
         setUser(null);
-        setActiveRole('CHEMIST_ADMIN');
         localStorage.clear();
         sessionStorage.clear();
+        window.location.href = 'http://localhost:5173'; // Redirect to Auth Portal
+    }, []);
+
+    // Load persisted session on mount
+    useEffect(() => {
+        setMounted(true);
+        const storedUser = localStorage.getItem(AUTH_USER_KEY) || sessionStorage.getItem(AUTH_USER_KEY);
+        
+        if (storedUser) {
+            try {
+                const parsed = JSON.parse(storedUser);
+                setUser({
+                    ...parsed,
+                    name: parsed.full_name, // Map for layout compatibility
+                    shopName: parsed.type_id || 'Pharmacy Store'
+                });
+                setActiveRole(parsed.type.toUpperCase());
+            } catch (e) {
+                console.error('Failed to parse stored user', e);
+            }
+        }
+    }, []);
+
+    const switchRole = useCallback((role: string) => {
+        setActiveRole(role);
     }, []);
 
     const value = useMemo<PersonaContextType>(() => ({
-        user,
+        user: user as any, // Cast to any to handle slightly different property names in Layout
         activeRole,
-        availableRoles: user?.roles || [],
+        availableRoles: [activeRole],
         switchRole,
-        isAdmin: activeRole === 'CHEMIST_ADMIN',
-        isStorekeeper: activeRole === 'STOREKEEPER',
-        loginAs,
+        isAdmin: true,
         logout,
         mounted,
-    }), [user, activeRole, switchRole, loginAs, logout, mounted]);
+    }), [user, activeRole, switchRole, logout, mounted]);
 
     return (
         <PersonaContext.Provider value={value}>
